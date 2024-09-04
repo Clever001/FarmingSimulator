@@ -1,11 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FarmingClasses.Exceptions;
+using FarmingClasses.Other;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace FarmingClasses.Plants;
-//public class Fruit : IPlant {
-//    string Name { get; }
-//}
 
+public class Fruit : Plant {
+
+    public TreeType TreeType { get; }
+
+    public Fruit(string name, DateOnly plantedTime, Duration maturationTime, string description, TreeType treeType)
+        : base(name, plantedTime, maturationTime, description) {
+        TreeType = treeType;
+    }
+}
+
+public enum TreeType {
+    [Display(Name = "Лиственное дерево")]
+    Deciduous,
+    [Display(Name = "Хвойное дерево")]
+    Coniferous,
+    [Display(Name = "Кустарник")]
+    Shrub,
+    [Display(Name = "Лиана")]
+    Vine,
+    [Display(Name = "Пальма")]
+    Palm,
+    [Display(Name = "Цитрусовое дерево")]
+    Citrus
+}

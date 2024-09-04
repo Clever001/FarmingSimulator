@@ -1,23 +1,33 @@
-﻿using FarmingClasses.Other;
+﻿using FarmingClasses.Exceptions;
+using FarmingClasses.Other;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FarmingClasses.Plants;
 
-public interface IPlant {
+public abstract class Plant {
     public string Name { get; }
 
-    public DateOnly Planted { get; }
+    public DateOnly PlantedTime { get; }
 
     public Duration MaturationTime { get; }
 
-    public bool IsReady(DateOnly date) {
-        DateOnly endDay = Planted.AddDays(MaturationTime.Days).AddMonths(MaturationTime.Months);
-        throw new NotImplementedException();
+    public string Description { get; }
+
+    public Plant(string name, DateOnly plantedTime, Duration maturationTime, string description) {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
+        if (plantedTime.Year < 1900) throw new ArgumentOutOfRangeException(nameof(plantedTime), "The planting time is too early");
+        if (maturationTime.Equals(default)) throw new DurationException(0, 0);
+        ArgumentException.ThrowIfNullOrWhiteSpace(description, nameof(description));
+
+        Name = name;
+        PlantedTime = plantedTime;
+        MaturationTime = maturationTime;
+        Description = description;
     }
 
-    public string Description { get; }
+    public bool IsRipe(DateOnly date) {
+        DateOnly MatureDate = PlantedTime.AddDays(MaturationTime.Days).AddMonths(MaturationTime.Months);
+        return MatureDate <= date;
+    }
+
 }
