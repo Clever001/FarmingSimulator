@@ -12,7 +12,7 @@ public class VegetableTests {
         Assert.Equal(new DateOnly(2023, 2, 1), carrot.PlantedTime);
         Assert.Equal(new Duration(90), carrot.MaturationTime);
         Assert.Equal("Carrots are good for the eyes.", carrot.Description);
-        Assert.Equal(VegetableType.RootVegetables, carrot.Type);
+        Assert.Equal(VegetableType.RootVegetables, carrot.VegetableType);
 
         Assert.Throws<ArgumentException>(() => { new Vegetable("", new(2023, 2, 1), new(90), "Carrots are good for the eyes.", VegetableType.RootVegetables); });
         Assert.Throws<ArgumentException>(() => { new Vegetable("  ", new(2023, 2, 1), new(90), "Carrots are good for the eyes.", VegetableType.RootVegetables); });

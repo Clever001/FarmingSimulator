@@ -5,11 +5,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FarmingClasses.Plants;
 public class Vegetable : Plant {
-    public VegetableType Type { get; }
+    public VegetableType VegetableType { get; }
 
     public Vegetable(string name, DateOnly plantedTime, Duration maturationTime, string description, VegetableType type) 
         : base(name, plantedTime, maturationTime, description) {
-        Type = type;
+        VegetableType = type;
     }
 }
 
