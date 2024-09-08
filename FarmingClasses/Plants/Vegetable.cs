@@ -23,5 +23,7 @@ public enum VegetableType {
     [Display(Name = "Листовой")]
     LeafyVegetables,
     [Display(Name = "Цветочный")]
-    FlowerVegetables
+    FlowerVegetables,
+    [Display(Name = "Клубнеплодный")]
+    TuberCrop
 }

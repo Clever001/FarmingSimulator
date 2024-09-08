@@ -9,7 +9,7 @@ public abstract class Plant {
 
     public DateOnly PlantedTime { get; }
 
-    public Duration MaturationTime { get; }
+    private Duration MaturationTime { get; }
 
     public string Description { get; }
 
@@ -25,7 +25,7 @@ public abstract class Plant {
         Description = description;
     }
 
-    public bool IsRipe(DateOnly date) {
+    public bool IsCollectable(DateOnly date) {
         DateOnly MatureDate = PlantedTime.AddDays(MaturationTime.Days).AddMonths(MaturationTime.Months);
         return MatureDate <= date;
     }

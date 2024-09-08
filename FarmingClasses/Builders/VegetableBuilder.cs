@@ -9,15 +9,20 @@ using System.Threading.Tasks;
 namespace FarmingClasses.Builders;
 
 public class VegetableBuilder {
-    public Vegetable GetCarrot(DateOnly plantedTime, Duration maturationTime) {
-        return new Vegetable("Carrot", plantedTime, maturationTime, "", VegetableType.RootVegetables);
+    private Random _random;
+
+    public VegetableBuilder(Random rnd) {
+        _random = rnd;
     }
 
-    public Vegetable GetLettuce(DateOnly plantedTime, Duration maturationTime) {
-        return new Vegetable("Lettuce", plantedTime, maturationTime, "", VegetableType.LeafyVegetables);
+    public VegetableBuilder() {
+        _random = new();
     }
 
-    public Vegetable GetWatermelon(DateOnly plantedTime, Duration maturationTime) {
-        return new Vegetable("Watermelon", plantedTime, maturationTime, "", VegetableType.FruitVegetables);
-    }
+    public Plant GetPotato(DateOnly plantedDate) => 
+        new Vegetable("Картофель", plantedDate, new Duration(), "Картофель является первым овощем, который был выведен в космос! " +
+            "Картофель стал символом надежды на то, что астронавты смогут иметь свежие продукты во время длительных космических путешествий!", VegetableType.TuberCrop);
+
+    //public Plant GetCarrot(DateOnly plantedDate) =>
+    //    new Vegetable("Морковь", plentedDate, maturationTime)
 }
