@@ -11,6 +11,8 @@ public class Vegetable : Plant {
         : base(name, plantedTime, maturationTime, description) {
         VegetableType = type;
     }
+
+    public override object Clone() => new Vegetable(Name, PlantedTime, MaturationTime, Description, VegetableType);
 }
 
 public enum VegetableType {

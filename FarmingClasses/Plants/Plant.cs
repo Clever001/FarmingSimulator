@@ -4,14 +4,16 @@ using System;
 
 namespace FarmingClasses.Plants;
 
-public abstract class Plant {
+public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
     public string Name { get; }
 
     public DateOnly PlantedTime { get; }
 
-    private Duration MaturationTime { get; }
+    protected Duration MaturationTime { get; }
 
     public string Description { get; }
+
+    public int BaseCost => 10;
 
     public Plant(string name, DateOnly plantedTime, Duration maturationTime, string description) {
         ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
@@ -30,4 +32,15 @@ public abstract class Plant {
         return MatureDate <= date;
     }
 
+    public abstract object Clone();
+
+    /// <summary>
+    /// Проверяет равны ли два растения. 
+    /// Проверяется только поле Name, так как другие поля не несут смысловой нагрузки.
+    /// </summary>
+    public bool Equals(Plant? other) {
+        if (other is null) return false;
+
+        return Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase);
+    }
 }

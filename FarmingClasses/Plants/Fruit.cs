@@ -13,6 +13,8 @@ public class Fruit : Plant {
         : base(name, plantedTime, maturationTime, description) {
         TreeType = treeType;
     }
+
+    public override object Clone() => new Fruit(Name, PlantedTime, MaturationTime, Description, TreeType);
 }
 
 public enum TreeType {

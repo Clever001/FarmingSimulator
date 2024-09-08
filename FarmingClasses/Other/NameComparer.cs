@@ -9,10 +9,11 @@ namespace FarmingClasses.Other;
 
 internal class NameComparer : IEqualityComparer<IBuyable> {
     public bool Equals(IBuyable? x, IBuyable? y) {
-        throw new NotImplementedException();
+        if (x is null || y is null) return false;
+        return x.Name == y.Name;
     }
 
     public int GetHashCode([DisallowNull] IBuyable obj) {
-        throw new NotImplementedException();
+        return obj.Name.GetHashCode();
     }
 }

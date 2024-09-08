@@ -10,6 +10,12 @@ namespace FarmingClasses.Other;
 /// Объекты, наследующие свойства от данного интерфейса, можно будет купить или продать в магазине.
 /// </summary>
 public interface IBuyable {
+    /// <summary>
+    /// Название товара
+    /// </summary>
     public string Name { get; }
+    /// <summary>
+    /// Базовая стоимость товара
+    /// </summary>
     public int BaseCost { get; }
 }
