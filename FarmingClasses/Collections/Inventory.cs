@@ -50,9 +50,7 @@ public class Inventory : ICollection<IBuyable> {
     }
 
     public IEnumerable<KeyValuePair<IBuyable, int>> GetSortedInventory() {
-        return from keyVal in _inventory
-               orderby keyVal.Key.Name
-               select keyVal;
+        return _inventory.OrderBy(kvp => kvp.Key.Name);
     }
 
     public bool Remove(IBuyable item, int count = 1) {
