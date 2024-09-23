@@ -23,5 +23,15 @@ internal class AutoMiner : IBuyable {
         BaseCost = baseCost;
         CanCollect = canCollect;
     }
+
+    public override int GetHashCode() => HashCode.Combine(Name, BaseCost);
+
+    public bool Equals(IBuyable? other) {
+        if (other is AutoMiner am) {
+            return Name.Equals(am.Name, StringComparison.OrdinalIgnoreCase)
+                   && BaseCost == am.BaseCost;
+        }
+        return false;
+    }
 }
 

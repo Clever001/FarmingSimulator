@@ -9,7 +9,7 @@ namespace FarmingClasses.Other;
 /// <summary>
 /// Объекты, наследующие свойства от данного интерфейса, можно будет купить или продать в магазине.
 /// </summary>
-public interface IBuyable {
+public interface IBuyable : IEquatable<IBuyable> {
     /// <summary>
     /// Название товара
     /// </summary>
@@ -18,4 +18,5 @@ public interface IBuyable {
     /// Базовая стоимость товара
     /// </summary>
     public int BaseCost { get; }
+    public int GetHashCode();
 }

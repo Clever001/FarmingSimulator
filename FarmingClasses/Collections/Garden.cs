@@ -58,9 +58,12 @@ public class Garden<T> : ICollection<T>, IEnumerable<T> where T : Plant {
         if (arrayIndex < 0 || arrayIndex >= array.Length) throw new ArgumentOutOfRangeException(nameof(array));
         if (array.Length - arrayIndex < _count) throw new ArgumentException("Недостаточно места в массиве.");
 
-        for (Node<T>? tmp = _root; tmp != null; tmp = tmp.Next) {
-            array[arrayIndex++] = (T)tmp.Current.Clone(); // Должны ли элементы массива быть клонами?
+        foreach (T item in this) {
+            array[arrayIndex++] = (T)item.Clone(); // Должны ли элементы массива быть клонами?
         }
+        //for (Node<T>? tmp = _root; tmp != null; tmp = tmp.Next) {
+        //    array[arrayIndex++] = (T)tmp.Current.Clone();
+        //}
     }
 
     //public void Sort() => Sort(delegate (T x, T y) {

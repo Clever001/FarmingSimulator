@@ -43,4 +43,16 @@ public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
 
         return Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase);
     }
+
+    public bool Equals(IBuyable? other) {
+        if (other is Plant pl) {
+            return Name.Equals(pl.Name, StringComparison.OrdinalIgnoreCase)
+                   && BaseCost == pl.BaseCost;
+        }
+        return false;
+    }
+
+    public override int GetHashCode() {
+        return HashCode.Combine(Name, BaseCost);
+    }
 }
