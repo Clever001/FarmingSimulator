@@ -59,18 +59,18 @@ public class Garden<T> : ICollection<T>, IEnumerable<T> where T : Plant {
         if (array.Length - arrayIndex < _count) throw new ArgumentException("Недостаточно места в массиве.");
 
         for (Node<T>? tmp = _root; tmp != null; tmp = tmp.Next) {
-            array[arrayIndex++] = (T)tmp.Current.Clone();
+            array[arrayIndex++] = (T)tmp.Current.Clone(); // Должны ли элементы массива быть клонами?
         }
     }
 
-    public void Sort() => Sort(delegate (T x, T y) {
-        return x.Name.CompareTo(y.Name);
-    });
+    //public void Sort() => Sort(delegate (T x, T y) {
+    //    return x.Name.CompareTo(y.Name);
+    //});
 
-    //public void Sort() => Sort((x, y) => x.Name.CompareTo(y.Name));
+    public void Sort() => Sort((x, y) => x.Name.CompareTo(y.Name));
 
-    public delegate int Comparison(T x, T y);
-    public void Sort(Comparison compare) {
+    //public delegate int Comparison(T x, T y);
+    public void Sort(Func<T, T, int> compare) {
         if (_count < 2) return;
 
         var (first, second) = SplitList();
@@ -113,10 +113,10 @@ public class Garden<T> : ICollection<T>, IEnumerable<T> where T : Plant {
 
     private (Garden<T>, Garden<T>) SplitList() {
         if (_root is null) { // _count == 0
-            return ([], []);
+            return (new Garden<T>(), new Garden<T>());
         }
         else if (_count == 1) {
-            return ([], [_root.Current]);
+            return (new Garden<T>(), new Garden<T> { _root.Current });
         }
 
         Node<T>? fast = _root, slow = _root;
@@ -166,5 +166,38 @@ public class Garden<T> : ICollection<T>, IEnumerable<T> where T : Plant {
             cur = cur.Next;
         }
         return false;
+    }
+
+
+    /// <summary>
+    /// Удаляет все элементы, удовлетворяющие условию предиката.
+    /// </summary>
+    /// <param name="predicate">Предикат.</param>
+    /// <param name="onRemove">Делегат, служащий для логирования.</param>
+    public void RemoveIf(Predicate<T> predicate, Action<T>? onRemove = null) {
+        if (_root is null) return;
+        if (predicate(_root.Current)) {
+            if (onRemove is not null) onRemove(_root.Current);
+            if (_root.Equals(_end)) _end = null; // List contains only one element.
+            _root = _root.Next;
+            _count--;
+            return;
+        }
+
+        Node<T>? prev = _root;
+        Node<T>? cur = _root.Next;
+        while (cur is not null) {
+            if (predicate(cur.Current)) {
+                if (onRemove is not null) onRemove(cur.Current);
+                if (cur.Equals(_end)) _end = prev; // Check if found element is last.
+                prev.Next = cur.Next;
+                cur = cur.Next;
+                _count--;
+                continue;
+            }
+            prev = cur;
+            cur = cur.Next;
+        }
+        return;
     }
 }
