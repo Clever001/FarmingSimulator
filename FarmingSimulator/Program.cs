@@ -1,12 +1,15 @@
-﻿using FarmingClasses.Other;
+﻿using Spectre.Console;
 
-Player player = new("Viktor");
 
-player.AddMoney(27);
-Console.WriteLine(player);
+var table = new Table().Centered();
 
-Calendar calendar = new();
+AnsiConsole.Live(table)
+    .Start(ctx => {
+        table.AddColumn("Foo");
+        ctx.Refresh();
+        Thread.Sleep(1000);
 
-calendar.AddMonths(1);
-calendar.AddDays(3);
-Console.WriteLine(calendar);
+        table.AddColumn("Bar");
+        ctx.Refresh();
+        Thread.Sleep(1000);
+    });

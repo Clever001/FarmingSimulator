@@ -5,7 +5,7 @@ namespace FarmingClasses.Other;
 /// <summary>
 /// Майнеры могут работать в саду.
 /// </summary>
-internal class AutoMiner : IBuyable {
+public class AutoMiner : IBuyable {
     public string Name { get; }
 
     public int BaseCost { get; }
