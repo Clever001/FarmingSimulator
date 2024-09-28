@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 namespace FarmingClasses.Other;
 public class Calendar {
     public DateOnly CurDay { get; private set; }
+    public int Year => CurDay.Year;
+    public int Month => CurDay.Month;
+    public int Day => CurDay.Day;
 
     public Calendar(DateOnly? day = null) {
         if (day is null) {

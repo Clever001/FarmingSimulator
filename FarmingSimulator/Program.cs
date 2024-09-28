@@ -1,15 +1,9 @@
-﻿using Spectre.Console;
+﻿using FarmingSimulator;
+using Spectre.Console;
 
+var gameBuilder = new GRArgs();
+gameBuilder.WriteStartInformation();
+gameBuilder.InitAdditionalGameInformation();
 
-var table = new Table().Centered();
-
-AnsiConsole.Live(table)
-    .Start(ctx => {
-        table.AddColumn("Foo");
-        ctx.Refresh();
-        Thread.Sleep(1000);
-
-        table.AddColumn("Bar");
-        ctx.Refresh();
-        Thread.Sleep(1000);
-    });
+var gameRenderer = new GameRenderer(gameBuilder);
+gameRenderer.MainCycle();
