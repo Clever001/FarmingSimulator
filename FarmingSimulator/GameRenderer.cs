@@ -3,13 +3,7 @@ using FarmingClasses.Collections;
 using FarmingClasses.Other;
 using FarmingClasses.Plants;
 using Spectre.Console;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FarmingSimulator;
 internal class GameRenderer {
@@ -70,8 +64,8 @@ internal class GameRenderer {
                         .PageSize(5)
                         .MoreChoicesText("[grey](Двигайтесь вверх или вниз, чтобы увидеть больше вариантов)[/]")
                         .AddChoices(new[] {
-                        PlayerAction.ViewGarden, PlayerAction.HarvestCrops, PlayerAction.ViewShop,
-                        PlayerAction.ViewInventory, PlayerAction.SwitchDay
+                        PlayerAction.ViewGarden, PlayerAction.HarvestCrops, PlayerAction.Plant,
+                        PlayerAction.ViewShop, PlayerAction.ViewInventory, PlayerAction.SwitchDay
                         })
                         .UseConverter(x => x.GetType()
                                             .GetMember(x.ToString())
@@ -88,6 +82,9 @@ internal class GameRenderer {
                         break;
                     case PlayerAction.HarvestCrops:
                         HarvestCrops();
+                        break;
+                    case PlayerAction.Plant:
+                        Plant();
                         break;
                     case PlayerAction.ViewShop:
                         ViewShop();
@@ -113,24 +110,33 @@ internal class GameRenderer {
                           select new KeyValuePair<string, int>(g.Key, g.Count());
 
             var table = new Table();
-            table.AddColumn(new TableColumn("Название").Centered());
-            table.AddColumn(new TableColumn("Количество").Centered());
-
-            foreach (var kvp in kvpairs) {
-                table.AddRow(kvp.Key, kvp.Value.ToString());
-            }
-
             table.Border = TableBorder.Minimal;
-
             table.Width = 50;
+            AnsiConsole.Live(table).Start(ctx => {
+                table.AddColumn(new TableColumn("Название").Centered());
+                table.AddColumn(new TableColumn("Количество").Centered());
+                ctx.Refresh();
+                Thread.Sleep(400);
+                foreach (var kvp in kvpairs) {
+                    table.AddRow(kvp.Key, kvp.Value.ToString());
+                    ctx.Refresh();
+                    Thread.Sleep(400);
+                }
+            });
 
-            AnsiConsole.Write(table);
         }
     }
 
     public void HarvestCrops() {
+        AnsiConsole.Write(new Rule("Собираем урожай").Centered());
+
         List<Plant> gainedPlants = new();
         _garden.RemoveIf(plant => plant.IsCollectable(_calendar.CurDay), gainedPlants.Add);
+
+        if (gainedPlants.Count == 0) {
+            AnsiConsole.MarkupLine("На данный момент ни одно растение не созрело.");
+            return;
+        }
 
         int minersCanHarvest = 0;
         foreach (AutoMiner miner in _autoMiners) { minersCanHarvest += miner.CanCollect; }
@@ -146,19 +152,121 @@ internal class GameRenderer {
                 }
             });
 
-        var kvpairs = from plant in gainedPlants
-                      group plant by plant.Name into g
-                      select new KeyValuePair<Plant, int>(PlantBuilder.GetPlant(g.Key), g.Count());
+        var kvpairs = (from plant in gainedPlants
+                       group plant by plant.Name into g
+                       select new KeyValuePair<Plant, int>(PlantBuilder.GetPlant(g.Key), g.Count())).ToArray();
 
+        AnsiConsole.MarkupLine("В следующей таблице представлены растения, которые были собраны из огорода.");
 
+        var tableOfCollected = new Table();
+
+        tableOfCollected.AddColumn(new TableColumn("Растение").Centered());
+        tableOfCollected.AddColumn(new TableColumn("Количество").Centered());
+
+        foreach (var kvp in kvpairs) {
+            tableOfCollected.AddRow(kvp.Key.Name, kvp.Value.ToString());
+        }
+
+        tableOfCollected.Border = TableBorder.Minimal;
+        AnsiConsole.Write(tableOfCollected.Centered());
+
+        AnsiConsole.MarkupLine("Некоторые растения дали больше урожая, чем ожидалось.");
+
+        var rnd = new Random();
+        var tableOfGained = new Table();
+        tableOfGained.AddColumn(new TableColumn("Растение").Centered());
+        tableOfGained.AddColumn(new TableColumn("Количество").Centered());
+
+        foreach (var kvp in kvpairs) {
+            int cnt = (int)(kvp.Value * (1.0 + rnd.NextDouble()));
+            _inventory.Add(kvp.Key, cnt);
+            tableOfGained.AddRow(kvp.Key.Name, cnt.ToString());
+        }
+
+        AnsiConsole.Write(tableOfGained.Centered());
     }
+
+    public void Plant() {
+        AnsiConsole.Write(new Rule("Посадка растения").Centered());
+        ViewInventory(printRule: false);
+
+        var items = _inventory.GetSortedKeys().ToList();
+
+        if (items.Count == 0) {
+            AnsiConsole.MarkupLine("Нету растений, которые нужно посадить.");
+            return;
+        }
+
+        string plantName;
+        do {
+            plantName = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("Какие растения вы хотите посадить?")
+                .PageSize(5)
+                .MoreChoicesText("[grey](Двигайтесь вверх или вниз, чтобы увидеть больше вариантов)[/]")
+                .AddChoices(items.Select(x => x.Name).Append("Ничего не садить")));
+            if (plantName == "Ничего не садить") continue;
+            
+            var plant = PlantBuilder.GetPlant(plantName);
+            const int maxCnt = _inventory[plant];
+            int cnt = AnsiConsole.Prompt(
+                new TextPrompt<int>("Сколько всего растений нужно посадить?")
+                    .Validate((n) => n switch {
+                        < 0 => Spectre.Console.ValidationResult.Error("Нужно больше нуля"),
+                        > maxCnt => Spectre.Console.ValidationResult.Error("Столько нет"),
+                        _ => Spectre.Console.ValidationResult.Success(),
+                    }));
+        } while (plantName != "Ничего не садить");
+    } 
 
     public void ViewShop() {
+        AnsiConsole.Write(new Rule("Магазин").Centered());
+        AnsiConsole.MarkupLineInterpolated($"На данный момент у вас имеется {_player.Capital} денежных единиц.");
 
+        var tableOfCosts = new Table();
+        tableOfCosts.AddColumn(new TableColumn("Название").Centered());
+        tableOfCosts.AddColumn(new TableColumn("Цена").Centered());
+
+        foreach (var kvp in _shop) {
+            tableOfCosts.AddRow(kvp.Key.Name, kvp.Value.ToString());
+        }
+
+        AnsiConsole.Write(tableOfCosts.Centered());
+
+        string selectionName;
+        do {
+            selectionName = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("Что вы хотите приобрести?")
+                .PageSize(10)
+                .MoreChoicesText("[grey](Двигайтесь вверх или вниз, чтобы увидеть больше вариантов)[/]")
+                .AddChoices(_shop.GetGoods().Select(x => x.Name).Concat(["Ничего не покупать"])));
+            if (selectionName == "Ничего не покупать") continue;
+
+            var good = GoodBuilder.GetGood(selectionName);
+            if (_shop.Buy(good, _player)) {
+                if (good is Plant pl) _inventory.Add(pl);
+                else if (good is AutoMiner am) _autoMiners.Add(am);
+                else throw new ArgumentNullException(nameof(good));
+                AnsiConsole.MarkupLineInterpolated($"Товар \"{good.Name}\" был добавлен в инвентарь. Остаточный баланс: {_player.Capital}");
+            }
+            else {
+                AnsiConsole.MarkupLineInterpolated($"У вас недостаточно средств для покупки товара.");
+            }
+        } while (selectionName != "Ничего не покупать");
     }
 
-    public void ViewInventory() {
+    public void ViewInventory(bool printRule = true) {
+        if (printRule) AnsiConsole.Write(new Rule("Вывод инвентаря"));
+        AnsiConsole.MarkupLine("Ваш инвентарь:");
+        var inventoryTable = new Table();
+        inventoryTable.AddColumn("Предмет");
+        inventoryTable.AddColumn("Количество");
+        foreach (var kvp in _inventory.GetSortedInventory()) {
+            inventoryTable.AddRow(kvp.Key.Name, kvp.Value.ToString());
+        }
 
+        AnsiConsole.Write(inventoryTable.Centered());
     }
 
     public void SwitchDay() {
@@ -171,6 +279,8 @@ internal enum PlayerAction {
     ViewGarden,
     [Display(Name = "Собрать урожай")]
     HarvestCrops,
+    [Display(Name = "Посадить растения")]
+    Plant,
     [Display(Name = "Посмотреть магазин")]
     ViewShop,
     [Display(Name = "Посмотреть инвентарь")]

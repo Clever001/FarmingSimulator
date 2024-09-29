@@ -38,6 +38,10 @@ public class Shop : IEnumerable<KeyValuePair<IBuyable, int>> {
         return false;
     }
 
+    public IEnumerable<IBuyable> GetGoods() {
+        return _costs.Keys;
+    }
+
     public IEnumerator<KeyValuePair<IBuyable, int>> GetEnumerator() {
         return _costs.GetEnumerator();
     }

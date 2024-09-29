@@ -2,9 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Security.Cryptography;
 
 namespace FarmingClasses.Collections;
 
@@ -14,6 +12,8 @@ public class Inventory : ICollection<IBuyable> {
     public int Count => _inventory.Count;
 
     public bool IsReadOnly => false;
+
+    public int this[IBuyable good] => _inventory[good];
 
     public void Add(IBuyable item, int count) {
         ArgumentNullException.ThrowIfNull(item, nameof(item));
@@ -53,6 +53,13 @@ public class Inventory : ICollection<IBuyable> {
 
     public IEnumerable<KeyValuePair<IBuyable, int>> GetSortedInventory() {
         return _inventory.Where(kvp => kvp.Value > 0).OrderBy(kvp => kvp.Key.Name);
+    }
+
+    public IEnumerable<IBuyable> GetSortedKeys() {
+        return from kvp in _inventory
+               where kvp.Value > 0
+               orderby kvp.Key.Name
+               select kvp.Key;
     }
 
     public bool Remove(IBuyable item, int count = 1) {
