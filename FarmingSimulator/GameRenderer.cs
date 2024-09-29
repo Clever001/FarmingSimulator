@@ -45,12 +45,12 @@ internal class GameRenderer {
         _fruitBuilder = args.FruitBuilder;
     }
 
-    public void MainCycle() {
+    public async Task MainCycle() {
         _inventory.Add(_vegetableBuilder.GetPotato(), 3);
         for (int i = 0; i != 2; ++i) _garden.Add(_vegetableBuilder.GetCarrot(_calendar.CurDay));
         for (int i = 0; i != 3; ++i) _garden.Add(_vegetableBuilder.GetPotato(_calendar.CurDay));
         for (int i = 0; i != 4; ++i) _garden.Add(_vegetableBuilder.GetCabbage(_calendar.CurDay));
-        _garden.Sort();
+        var sortTask = _garden.SortAsync();
 
         while (!_player.IsBankrupt) {
             // ----- Печать календаря ----- //
@@ -81,6 +81,7 @@ internal class GameRenderer {
                                             .LastOrDefault()!
                                             .GetName()!
                         ));
+                await sortTask;
                 switch (selection) {
                     case PlayerAction.ViewGarden:
                         ViewGarden();
@@ -98,7 +99,6 @@ internal class GameRenderer {
                         SwitchDay();
                         break;
                 }
-                break;
             }
             break;
         }
@@ -129,6 +129,27 @@ internal class GameRenderer {
     }
 
     public void HarvestCrops() {
+        List<Plant> gainedPlants = new();
+        _garden.RemoveIf(plant => plant.IsCollectable(_calendar.CurDay), gainedPlants.Add);
+
+        int minersCanHarvest = 0;
+        foreach (AutoMiner miner in _autoMiners) { minersCanHarvest += miner.CanCollect; }
+
+        int countOfWaitSteps = Math.Max(0, gainedPlants.Count - minersCanHarvest);
+
+        AnsiConsole.Progress()
+            .Start(ctx => {
+                var task1 = ctx.AddTask("[green]Собираем урожай[/]", maxValue: countOfWaitSteps);
+                while (!ctx.IsFinished) {
+                    Thread.Sleep(1000);
+                    task1.Increment(1.0);
+                }
+            });
+
+        var kvpairs = from plant in gainedPlants
+                      group plant by plant.Name into g
+                      select new KeyValuePair<Plant, int>(PlantBuilder.GetPlant(g.Key), g.Count());
+
 
     }
 

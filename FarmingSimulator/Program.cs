@@ -6,4 +6,4 @@ gameBuilder.WriteStartInformation();
 gameBuilder.InitAdditionalGameInformation();
 
 var gameRenderer = new GameRenderer(gameBuilder);
-gameRenderer.MainCycle();
+await gameRenderer.MainCycle();

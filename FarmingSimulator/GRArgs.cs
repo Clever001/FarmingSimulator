@@ -43,14 +43,13 @@ internal class GRArgs {
                 Calendar = new();
                 AnsiConsole.MarkupLine("Календарь создан.");
 
-                ctx.Status("Инициализация билдеров...");
+                Thread.Sleep(1000);
                 AutoMinerBuilder = new();
                 VegetableBuilder = new();
                 FruitBuilder = new();
-                Thread.Sleep(1000);
-                AnsiConsole.MarkupLine("Билдеры созданы.\n");
+                AnsiConsole.MarkupLine("Билдеры созданы.");
 
-                ctx.Status("Инициализация контейнеров...");
+                Thread.Sleep(1000);
                 AutoMiners = new();
                 Garden = new();
                 Inventory = new();
@@ -59,7 +58,6 @@ internal class GRArgs {
                 goods.AddRange(FruitBuilder.GetAll());
                 goods.AddRange(VegetableBuilder.GetAll());
                 Shop = new(goods);
-                Thread.Sleep(1000);
                 AnsiConsole.MarkupLine("Контейнеры созданы.");
 
                 AnsiConsole.MarkupLine("Инициализация завершена.");

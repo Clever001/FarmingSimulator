@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FarmingClasses.Collections;
 
@@ -81,6 +82,15 @@ public class Garden<T> : ICollection<T>, IEnumerable<T> where T : Plant {
     public void Sort() => Sort((x, y) => x.Name.CompareTo(y.Name));
 
     //public delegate int Comparison(T x, T y);
+
+    public async Task SortAsync() => await Task.Run(Sort);
+
+    public async Task SortAsync(Func<T, T, int> compare) {
+        await Task.Run(() => {
+            Sort(compare);
+        });
+    }
+
     public void Sort(Func<T, T, int> compare) {
         if (_count < 2) return;
 
