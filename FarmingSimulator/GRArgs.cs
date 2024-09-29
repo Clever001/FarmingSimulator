@@ -16,6 +16,7 @@ internal class GRArgs {
     public List<AutoMiner>? AutoMiners { get; private set; } = null;
     public Garden<Plant>? Garden { get; private set; } = null;
     public Inventory? Inventory { get; private set; } = null;
+    public Shop? Shop { get; private set; } = null;
     public AutoMinerBuilder? AutoMinerBuilder { get; private set; } = null;
     public VegetableBuilder? VegetableBuilder { get; private set; } = null;
     public FruitBuilder? FruitBuilder { get; private set; } = null;
@@ -42,19 +43,24 @@ internal class GRArgs {
                 Calendar = new();
                 AnsiConsole.MarkupLine("Календарь создан.");
 
-                ctx.Status("Инициализация контейнеров...");
-                AutoMiners = new();
-                Garden = new();
-                Inventory = new();
-                Thread.Sleep(1000);
-                AnsiConsole.MarkupLine("Контейнеры созданы.");
-
                 ctx.Status("Инициализация билдеров...");
                 AutoMinerBuilder = new();
                 VegetableBuilder = new();
                 FruitBuilder = new();
                 Thread.Sleep(1000);
                 AnsiConsole.MarkupLine("Билдеры созданы.\n");
+
+                ctx.Status("Инициализация контейнеров...");
+                AutoMiners = new();
+                Garden = new();
+                Inventory = new();
+                var goods = new List<IBuyable>();
+                goods.AddRange(AutoMinerBuilder.GetAll());
+                goods.AddRange(FruitBuilder.GetAll());
+                goods.AddRange(VegetableBuilder.GetAll());
+                Shop = new(goods);
+                Thread.Sleep(1000);
+                AnsiConsole.MarkupLine("Контейнеры созданы.");
 
                 AnsiConsole.MarkupLine("Инициализация завершена.");
             });

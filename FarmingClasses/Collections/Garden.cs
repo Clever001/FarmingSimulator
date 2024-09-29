@@ -21,12 +21,14 @@ public class Garden<T> : ICollection<T>, IEnumerable<T> where T : Plant {
     public bool IsReadOnly => false;
 
     public void AddFirst(T item) {
+        ArgumentNullException.ThrowIfNull(item.PlantedTime, nameof(item));
         _root = new Node<T>(item, next: _root);
         _count++;
         if (_count == 1) _end = _root;
     }
 
     public void AddLast(T item) {
+        ArgumentNullException.ThrowIfNull(item.PlantedTime, nameof(item));
         if (_end is null) { // Is empty.
             _root = new Node<T>(item, next: null);
             _end = _root;
@@ -39,6 +41,12 @@ public class Garden<T> : ICollection<T>, IEnumerable<T> where T : Plant {
     }
 
     public void Add(T item) => AddLast(item);
+
+    public void AddRange(IEnumerable<T> plants) {
+        foreach (T plant in plants) {
+            AddLast(plant);
+        }
+    }
 
     public void Clear() {
         _root = null;

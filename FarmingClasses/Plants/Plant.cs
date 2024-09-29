@@ -7,7 +7,7 @@ namespace FarmingClasses.Plants;
 public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
     public string Name { get; }
 
-    public DateOnly PlantedTime { get; }
+    public DateOnly? PlantedTime { get; }
 
     protected Duration MaturationTime { get; }
 
@@ -15,9 +15,9 @@ public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
 
     public int BaseCost => 10;
 
-    public Plant(string name, DateOnly plantedTime, Duration maturationTime, string description) {
+    public Plant(string name, DateOnly? plantedTime, Duration maturationTime, string description) {
         ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
-        if (plantedTime.Year < 1900) throw new ArgumentOutOfRangeException(nameof(plantedTime), "The planting time is too early");
+        if (plantedTime?.Year < 1900) throw new ArgumentOutOfRangeException(nameof(plantedTime), "The planting time is too early");
         if (maturationTime.Equals(default)) throw new DurationException(0, 0);
         ArgumentException.ThrowIfNullOrWhiteSpace(description, nameof(description));
 
@@ -28,7 +28,8 @@ public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
     }
 
     public bool IsCollectable(DateOnly date) {
-        DateOnly MatureDate = PlantedTime.AddDays(MaturationTime.Days).AddMonths(MaturationTime.Months);
+        if (PlantedTime is null) return false;
+        DateOnly MatureDate = PlantedTime.Value.AddDays(MaturationTime.Days).AddMonths(MaturationTime.Months);
         return MatureDate <= date;
     }
 

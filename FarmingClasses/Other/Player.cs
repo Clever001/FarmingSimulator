@@ -27,6 +27,8 @@ public class Player {
 
     public bool IsBankrupt { get => Capital == 0; }
 
+    public void MakeBunkrupt() => Capital = 0;
+
     public override string ToString() {
         return $"Игрок {Name} имеет при себе {Capital} денег.";
     }

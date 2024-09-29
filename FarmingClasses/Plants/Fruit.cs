@@ -9,7 +9,7 @@ public class Fruit : Plant {
 
     public TreeType TreeType { get; }
 
-    public Fruit(string name, DateOnly plantedTime, Duration maturationTime, string description, TreeType treeType)
+    public Fruit(string name, DateOnly? plantedTime, Duration maturationTime, string description, TreeType treeType)
         : base(name, plantedTime, maturationTime, description) {
         TreeType = treeType;
     }

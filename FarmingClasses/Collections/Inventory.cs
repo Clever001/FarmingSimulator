@@ -15,7 +15,9 @@ public class Inventory : ICollection<IBuyable> {
 
     public bool IsReadOnly => false;
 
-    public void Add(IBuyable item, int count = 1) {
+    public void Add(IBuyable item, int count) {
+        ArgumentNullException.ThrowIfNull(item, nameof(item));
+        ArgumentOutOfRangeException.ThrowIfLessThan(count, 1, nameof(count));
         if (_inventory.TryGetValue(item, out int value)) _inventory[item] = value + count;
         else _inventory.Add(item, 1);
     }
@@ -50,7 +52,7 @@ public class Inventory : ICollection<IBuyable> {
     }
 
     public IEnumerable<KeyValuePair<IBuyable, int>> GetSortedInventory() {
-        return _inventory.OrderBy(kvp => kvp.Key.Name);
+        return _inventory.Where(kvp => kvp.Value > 0).OrderBy(kvp => kvp.Key.Name);
     }
 
     public bool Remove(IBuyable item, int count = 1) {

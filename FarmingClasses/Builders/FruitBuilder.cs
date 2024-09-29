@@ -1,6 +1,8 @@
 ﻿using FarmingClasses.Other;
 using FarmingClasses.Plants;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace FarmingClasses.Builders;
 
@@ -15,12 +17,17 @@ public class FruitBuilder {
         _random = new();
     }
 
-    public Plant GetApple(DateOnly plantedDate) =>
+    public Plant GetApple(DateOnly? plantedDate = null) =>
         new Fruit("Яблоко", plantedDate, new Duration(days: 45 + _random.Next(15)), "В реальности игры яблоки созревают за 45-60 дней.", TreeType.Deciduous);
 
-    public Plant GetPear(DateOnly plantedDate) =>
+    public Plant GetPear(DateOnly? plantedDate = null) =>
         new Fruit("Груша", plantedDate, new Duration(days: 50 + _random.Next(20)), "В реальности игры груши вырастают за 50-70 дней.", TreeType.Deciduous);
 
-    public Plant GetBlueberry(DateOnly plantedDate) =>
+    public Plant GetBlueberry(DateOnly? plantedDate = null) =>
         new Fruit("Черника", plantedDate, new Duration(days: 50 + _random.Next(20)), "В реальности игры черника растет за 50-70 дней.", TreeType.Shrub);
+
+    public IEnumerable<IBuyable> GetAll() {
+        List<IBuyable> fruits = [GetApple(), GetPear(), GetBlueberry()];
+        return fruits;
+    }
 }
