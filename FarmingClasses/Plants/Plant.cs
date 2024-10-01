@@ -7,9 +7,9 @@ namespace FarmingClasses.Plants;
 public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
     public string Name { get; }
 
-    public DateOnly? PlantedTime { get; }
+    public DateOnly? PlantedTime { get; private set; }
 
-    protected Duration MaturationTime { get; }
+    protected Duration MaturationTime { get; private set; }
 
     public string Description { get; }
 
@@ -25,6 +25,11 @@ public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
         PlantedTime = plantedTime;
         MaturationTime = maturationTime;
         Description = description;
+    }
+
+    public void ChangePlantAndMaturationTime(DateOnly planted, Duration maturation) {
+        PlantedTime = planted;
+        MaturationTime = maturation;
     }
 
     public bool IsCollectable(DateOnly date) {

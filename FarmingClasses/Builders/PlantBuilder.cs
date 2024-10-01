@@ -16,4 +16,15 @@ public static class PlantBuilder {
         "Капуста" => (new VegetableBuilder()).GetCabbage(),
         _ => throw new ArgumentOutOfRangeException(nameof(name))
     };
+
+    public static IEnumerable<T> GetRangeOfPlants<T>(T plant, int cnt, DateOnly date) where T : Plant {
+        if (plant is Fruit) {
+            FruitBuilder builder = new();
+            List<Fruit> fruits = new();
+            switch (plant.Name) {
+                case "Яблоко":
+                    for (int i = 0; i != cnt; i++) { fruits.Add(builder.GetApple(date)); } // Continue here
+            }
+        }
+    }
 }

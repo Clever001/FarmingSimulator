@@ -4,6 +4,7 @@ using FarmingClasses.Other;
 using FarmingClasses.Plants;
 using Spectre.Console;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
 
 namespace FarmingSimulator;
 internal class GameRenderer {
@@ -188,11 +189,11 @@ internal class GameRenderer {
 
     public void Plant() {
         AnsiConsole.Write(new Rule("Посадка растения").Centered());
-        ViewInventory(printRule: false);
+        ViewInventory(printRule: false, printMiners: false);
 
-        var items = _inventory.GetSortedKeys().ToList();
+        var items = _inventory.GetSortedKeys().Select(x => x.Name);
 
-        if (items.Count == 0) {
+        if (!items.Any()) {
             AnsiConsole.MarkupLine("Нету растений, которые нужно посадить.");
             return;
         }
@@ -204,18 +205,20 @@ internal class GameRenderer {
                 .Title("Какие растения вы хотите посадить?")
                 .PageSize(5)
                 .MoreChoicesText("[grey](Двигайтесь вверх или вниз, чтобы увидеть больше вариантов)[/]")
-                .AddChoices(items.Select(x => x.Name).Append("Ничего не садить")));
+                .AddChoices(items.Append("Ничего не садить")));
             if (plantName == "Ничего не садить") continue;
             
-            var plant = PlantBuilder.GetPlant(plantName);
-            const int maxCnt = _inventory[plant];
+            Plant plant = PlantBuilder.GetPlant(plantName);
+            int maxCnt = _inventory[plant];
             int cnt = AnsiConsole.Prompt(
                 new TextPrompt<int>("Сколько всего растений нужно посадить?")
-                    .Validate((n) => n switch {
-                        < 0 => Spectre.Console.ValidationResult.Error("Нужно больше нуля"),
-                        > maxCnt => Spectre.Console.ValidationResult.Error("Столько нет"),
-                        _ => Spectre.Console.ValidationResult.Success(),
+                    .Validate(n => {
+                        if (n <= 0) return Spectre.Console.ValidationResult.Error("Нужно число большее или равное нулю");
+                        else if (n > maxCnt) return Spectre.Console.ValidationResult.Error("Столько растений нет в инвентаре");
+                        else return Spectre.Console.ValidationResult.Success();
                     }));
+
+            //Continue
         } while (plantName != "Ничего не садить");
     } 
 
@@ -256,17 +259,23 @@ internal class GameRenderer {
         } while (selectionName != "Ничего не покупать");
     }
 
-    public void ViewInventory(bool printRule = true) {
+    public void ViewInventory(bool printRule = true, bool printMiners = true) {
         if (printRule) AnsiConsole.Write(new Rule("Вывод инвентаря"));
         AnsiConsole.MarkupLine("Ваш инвентарь:");
-        var inventoryTable = new Table();
-        inventoryTable.AddColumn("Предмет");
-        inventoryTable.AddColumn("Количество");
-        foreach (var kvp in _inventory.GetSortedInventory()) {
-            inventoryTable.AddRow(kvp.Key.Name, kvp.Value.ToString());
-        }
+        var table = new Table();
+        table.AddColumn("Предмет");
+        table.AddColumn("Количество");
+        foreach (var kvp in _inventory.GetSortedInventory()) { table.AddRow(kvp.Key.Name, kvp.Value.ToString()); }
+        AnsiConsole.Write(table.Centered());
 
-        AnsiConsole.Write(inventoryTable.Centered());
+        if (printMiners) {
+            AnsiConsole.MarkupLine("Ваши работники:");
+            table.AddColumn("Название");
+            table.AddColumn("Производительность");
+            var minersOrderedByName = _autoMiners.OrderBy(miner => miner.Name);
+            foreach (var miner in minersOrderedByName) { table.AddRow(miner.Name, miner.CanCollect.ToString()); }
+            AnsiConsole.Write(table);
+        }
     }
 
     public void SwitchDay() {
