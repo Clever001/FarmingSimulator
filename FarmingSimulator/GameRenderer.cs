@@ -4,7 +4,7 @@ using FarmingClasses.Other;
 using FarmingClasses.Plants;
 using Spectre.Console;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
 
 namespace FarmingSimulator;
 internal class GameRenderer {
@@ -103,7 +103,6 @@ internal class GameRenderer {
                         return;
                 }
             }
-            break;
         }
     }
 
@@ -133,7 +132,10 @@ internal class GameRenderer {
         }
     }
 
-    public void HarvestCrops() {
+    public void HarvestCrops() { 
+
+        // Исправь в этом методе баг.
+
         AnsiConsole.Write(new Rule("Собираем урожай").Centered());
 
         List<Plant> gainedPlants = new();
@@ -296,7 +298,19 @@ internal class GameRenderer {
     }
 
     public void SwitchDay() {
+        AnsiConsole.Write(new Rule("Переключение времени").Centered());
+        string periodSelection = AnsiConsole.Prompt(
+            new TextPrompt<string>("Вы хотите промотать некоторое количество дней или месяцев?")
+            .AddChoices(["Дни", "Месяцы", "Не проматывать время"])
+            .DefaultValue("Дни"));
+        if (periodSelection == "Не проматывать время") return;
 
+        int cnt = AnsiConsole.Prompt(
+            new TextPrompt<int>("Укажите число")
+            .Validate(num =>  num > 0 ? Spectre.Console.ValidationResult.Success() : Spectre.Console.ValidationResult.Error("Слишком мало.")));
+
+        if (periodSelection == "Дни") _calendar.AddDays(cnt);
+        else _calendar.AddMonths(cnt);
     }
 }
 

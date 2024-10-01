@@ -17,10 +17,12 @@ public static class PlantBuilder {
         _ => throw new ArgumentOutOfRangeException(nameof(name))
     };
 
-    public static IEnumerable<T> GetRangeOfPlants<T>(T plant, int cnt, DateOnly date) where T : Plant {
+    public static IEnumerable<Plant> GetRangeOfPlants(Plant plant, int cnt, DateOnly date) {
+        ArgumentNullException.ThrowIfNull(plant, nameof(plant));
+        ArgumentOutOfRangeException.ThrowIfLessThan(cnt, 0, nameof(cnt));
         if (plant is Fruit) {
             FruitBuilder builder = new();
-            List<Fruit> fruits = new();
+            List<Plant> fruits = new();
             switch (plant.Name) {
                 case "Яблоко":
                     for (int i = 0; i != cnt; i++) { fruits.Add(builder.GetApple(date)); }
@@ -34,10 +36,10 @@ public static class PlantBuilder {
                 default:
                     throw new ArgumentException("Было неправильно интерпретировано название растения.");
             }
-            return (IEnumerable<T>)fruits;
+            return fruits;
         } else if (plant is Vegetable) {
             VegetableBuilder builder = new();
-            List<Vegetable> vegetables = new();
+            List<Plant> vegetables = new();
             switch (plant.Name) {
                 case "Картофель":
                     for (int i = 0; i != cnt; i++) { vegetables.Add(builder.GetPotato(date)); }
@@ -51,7 +53,7 @@ public static class PlantBuilder {
                 default:
                     throw new ArgumentException("Было неправильно интерпретировано название растения.");
             }
-            return (IEnumerable<T>)vegetables;
+            return vegetables;
         }
         // Never executed;
         throw new Exception("Программе оказался неизвестный класс растений.");
