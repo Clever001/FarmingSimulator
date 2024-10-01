@@ -54,7 +54,7 @@ internal class GameRenderer {
             cal.HeaderStyle(Style.Parse("cyan bold"));
             cal.AddCalendarEvent(_calendar.Year, _calendar.Month, _calendar.Day);
             cal.HighlightStyle(Style.Parse("green bold"));
-            AnsiConsole.Write(cal);
+            AnsiConsole.Write(cal.Centered());
 
             var today = _calendar.CurDay;
             while (_calendar.CurDay.Equals(today)) {
@@ -66,7 +66,8 @@ internal class GameRenderer {
                         .MoreChoicesText("[grey](Двигайтесь вверх или вниз, чтобы увидеть больше вариантов)[/]")
                         .AddChoices(new[] {
                         PlayerAction.ViewGarden, PlayerAction.HarvestCrops, PlayerAction.Plant,
-                        PlayerAction.ViewShop, PlayerAction.ViewInventory, PlayerAction.SwitchDay
+                        PlayerAction.ViewShop, PlayerAction.ViewInventory, PlayerAction.SwitchDay,
+                        PlayerAction.ExitGame
                         })
                         .UseConverter(x => x.GetType()
                                             .GetMember(x.ToString())
@@ -96,6 +97,10 @@ internal class GameRenderer {
                     case PlayerAction.SwitchDay:
                         SwitchDay();
                         break;
+                    default:
+                        AnsiConsole.MarkupLine("[#6BE400]Выход из игры.[/]");
+                        await Task.Delay(1000);
+                        return;
                 }
             }
             break;
@@ -189,17 +194,17 @@ internal class GameRenderer {
 
     public void Plant() {
         AnsiConsole.Write(new Rule("Посадка растения").Centered());
-        ViewInventory(printRule: false, printMiners: false);
-
-        var items = _inventory.GetSortedKeys().Select(x => x.Name);
-
-        if (!items.Any()) {
-            AnsiConsole.MarkupLine("Нету растений, которые нужно посадить.");
-            return;
-        }
 
         string plantName;
         do {
+            ViewInventory(printRule: false, printMiners: false);
+            var items = _inventory.GetSortedKeys().Select(x => x.Name);
+
+            if (!items.Any()) {
+                AnsiConsole.MarkupLine("Нету больше растений, которые можно посадить.");
+                return;
+            }
+
             plantName = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("Какие растения вы хотите посадить?")
@@ -213,31 +218,35 @@ internal class GameRenderer {
             int cnt = AnsiConsole.Prompt(
                 new TextPrompt<int>("Сколько всего растений нужно посадить?")
                     .Validate(n => {
-                        if (n <= 0) return Spectre.Console.ValidationResult.Error("Нужно число большее или равное нулю");
+                        if (n <= 0) return Spectre.Console.ValidationResult.Error("Нужно число большее нуля");
                         else if (n > maxCnt) return Spectre.Console.ValidationResult.Error("Столько растений нет в инвентаре");
                         else return Spectre.Console.ValidationResult.Success();
                     }));
 
-            //Continue
+            _garden.AddRange(PlantBuilder.GetRangeOfPlants(plant, cnt, _calendar.CurDay));
+            _inventory.Remove(plant, cnt);
         } while (plantName != "Ничего не садить");
+        _garden.Sort();
     } 
 
     public void ViewShop() {
         AnsiConsole.Write(new Rule("Магазин").Centered());
-        AnsiConsole.MarkupLineInterpolated($"На данный момент у вас имеется {_player.Capital} денежных единиц.");
-
-        var tableOfCosts = new Table();
-        tableOfCosts.AddColumn(new TableColumn("Название").Centered());
-        tableOfCosts.AddColumn(new TableColumn("Цена").Centered());
-
-        foreach (var kvp in _shop) {
-            tableOfCosts.AddRow(kvp.Key.Name, kvp.Value.ToString());
-        }
-
-        AnsiConsole.Write(tableOfCosts.Centered());
+        
 
         string selectionName;
         do {
+            AnsiConsole.MarkupLineInterpolated($"На данный момент у вас имеется {_player.Capital} денежных единиц.");
+
+            var tableOfCosts = new Table();
+            tableOfCosts.AddColumn(new TableColumn("Название").Centered());
+            tableOfCosts.AddColumn(new TableColumn("Цена").Centered());
+
+            foreach (var kvp in _shop) {
+                tableOfCosts.AddRow(kvp.Key.Name, kvp.Value.ToString());
+            }
+
+            AnsiConsole.Write(tableOfCosts.Centered());
+
             selectionName = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("Что вы хотите приобрести?")
@@ -260,21 +269,29 @@ internal class GameRenderer {
     }
 
     public void ViewInventory(bool printRule = true, bool printMiners = true) {
-        if (printRule) AnsiConsole.Write(new Rule("Вывод инвентаря"));
-        AnsiConsole.MarkupLine("Ваш инвентарь:");
-        var table = new Table();
-        table.AddColumn("Предмет");
-        table.AddColumn("Количество");
-        foreach (var kvp in _inventory.GetSortedInventory()) { table.AddRow(kvp.Key.Name, kvp.Value.ToString()); }
-        AnsiConsole.Write(table.Centered());
+        if (printRule) AnsiConsole.Write(new Rule("Вывод инвентаря").Centered());
+        var sortedInventory = _inventory.GetSortedInventory();
+        if (sortedInventory.Any()) {
+            AnsiConsole.MarkupLine("Ваш инвентарь:");
+            var table = new Table();
+            table.AddColumn("Предмет");
+            table.AddColumn("Количество");
+            foreach (var kvp in sortedInventory) { table.AddRow(kvp.Key.Name, kvp.Value.ToString()); }
+            AnsiConsole.Write(table.Centered());
+        }
+        else AnsiConsole.MarkupLine("У вас нет предметов в инвентаре.");
+        
 
-        if (printMiners) {
+        if (printMiners && _autoMiners.Count != 0) {
             AnsiConsole.MarkupLine("Ваши работники:");
+            var table = new Table();
             table.AddColumn("Название");
             table.AddColumn("Производительность");
             var minersOrderedByName = _autoMiners.OrderBy(miner => miner.Name);
             foreach (var miner in minersOrderedByName) { table.AddRow(miner.Name, miner.CanCollect.ToString()); }
-            AnsiConsole.Write(table);
+            AnsiConsole.Write(table.Centered());
+        } else if (printMiners) {
+            AnsiConsole.MarkupLine("У вас нет работников в саду.");
         }
     }
 
@@ -295,5 +312,7 @@ internal enum PlayerAction {
     [Display(Name = "Посмотреть инвентарь")]
     ViewInventory,
     [Display(Name = "Промотать время")]
-    SwitchDay
+    SwitchDay,
+    [Display(Name = "Закончить игру")]
+    ExitGame
 }

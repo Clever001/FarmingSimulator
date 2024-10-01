@@ -29,7 +29,7 @@ public class Shop : IEnumerable<KeyValuePair<IBuyable, int>> {
 
         if (_costs.TryGetValue(good, out int cost)) {
             if (player.PayMoney(cost)) {
-                _costs[good] = (int) (cost * _increase);
+                _costs[good] = (int)Math.Ceiling(cost * _increase);
                 return true;
             } else {
                 return false;
