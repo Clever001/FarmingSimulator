@@ -7,7 +7,7 @@ namespace FarmingClasses.Other;
 /// </summary>
 public class AutoMiner : IBuyable {
     public string Name { get; }
-
+    public string? PluralName { get; } = null;
     public int BaseCost { get; }
 
     /// <summary>
@@ -22,6 +22,12 @@ public class AutoMiner : IBuyable {
         Name = name;
         BaseCost = baseCost;
         CanCollect = canCollect;
+    }
+
+    public AutoMiner(string name, string pluralName, int baseCost, int canCollect)
+        : this(name, baseCost, canCollect) {
+        ArgumentException.ThrowIfNullOrWhiteSpace(pluralName, nameof(pluralName));
+        PluralName = pluralName;
     }
 
     public override int GetHashCode() => HashCode.Combine(Name, BaseCost);

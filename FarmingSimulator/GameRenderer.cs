@@ -42,9 +42,9 @@ internal class GameRenderer {
 
     public async Task MainCycle() {
         _inventory.Add(_vegetableBuilder.GetPotato(), 3);
-        for (int i = 0; i != 2; ++i) _garden.Add(_vegetableBuilder.GetCarrot(_calendar.CurDay));
-        for (int i = 0; i != 3; ++i) _garden.Add(_vegetableBuilder.GetPotato(_calendar.CurDay));
-        for (int i = 0; i != 4; ++i) _garden.Add(_vegetableBuilder.GetCabbage(_calendar.CurDay));
+        for (int i = 0; i != 10; ++i) _garden.Add(_vegetableBuilder.GetPotato(_calendar.CurDay));
+        //for (int i = 0; i != 3; ++i) _garden.Add(_vegetableBuilder.GetPotato(_calendar.CurDay));
+        //for (int i = 0; i != 4; ++i) _garden.Add(_vegetableBuilder.GetCabbage(_calendar.CurDay));
         var sortTask = _garden.SortAsync();
 
         while (!_player.IsBankrupt) {

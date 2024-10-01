@@ -196,14 +196,13 @@ public class Garden<T> : ICollection<T>, IEnumerable<T> where T : Plant {
     /// <param name="predicate">Предикат.</param>
     /// <param name="onRemove">Делегат, служащий для логирования.</param>
     public void RemoveIf(Predicate<T> predicate, Action<T>? onRemove = null) {
-        if (_root is null) return;
-        if (predicate(_root.Current)) {
+        while (_root is not null && predicate(_root.Current)) {
             if (onRemove is not null) onRemove(_root.Current);
             if (_root.Equals(_end)) _end = null; // List contains only one element.
             _root = _root.Next;
             _count--;
-            return;
         }
+        if (_root is null) return;
 
         Node<T>? prev = _root;
         Node<T>? cur = _root.Next;
@@ -219,6 +218,5 @@ public class Garden<T> : ICollection<T>, IEnumerable<T> where T : Plant {
             prev = cur;
             cur = cur.Next;
         }
-        return;
     }
 }
