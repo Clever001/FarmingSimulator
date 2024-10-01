@@ -4,7 +4,6 @@ using FarmingClasses.Other;
 using FarmingClasses.Plants;
 using Spectre.Console;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.Intrinsics.X86;
 
 namespace FarmingSimulator;
 internal class GameRenderer {
@@ -67,7 +66,7 @@ internal class GameRenderer {
                         .AddChoices(new[] {
                         PlayerAction.ViewGarden, PlayerAction.HarvestCrops, PlayerAction.Plant,
                         PlayerAction.ViewShop, PlayerAction.ViewInventory, PlayerAction.SwitchDay,
-                        PlayerAction.ExitGame
+                        PlayerAction.ViewInfo, PlayerAction.ExitGame
                         })
                         .UseConverter(x => x.GetType()
                                             .GetMember(x.ToString())
@@ -80,23 +79,19 @@ internal class GameRenderer {
                 await sortTask;
                 switch (selection) {
                     case PlayerAction.ViewGarden:
-                        ViewGarden();
-                        break;
+                        ViewGarden();break;
                     case PlayerAction.HarvestCrops:
-                        HarvestCrops();
-                        break;
+                        HarvestCrops();break;
                     case PlayerAction.Plant:
-                        Plant();
-                        break;
+                        Plant();break;
                     case PlayerAction.ViewShop:
-                        ViewShop();
-                        break;
+                        ViewShop();break;
                     case PlayerAction.ViewInventory:
-                        ViewInventory();
-                        break;
+                        ViewInventory();break;
                     case PlayerAction.SwitchDay:
-                        SwitchDay();
-                        break;
+                        SwitchDay();break;
+                    case PlayerAction.ViewInfo:
+                        ViewInfo();break;
                     default:
                         AnsiConsole.MarkupLine("[#6BE400]Выход из игры.[/]");
                         await Task.Delay(1000);
@@ -114,9 +109,10 @@ internal class GameRenderer {
                           group culture by culture.Name into g
                           select new KeyValuePair<string, int>(g.Key, g.Count());
 
-            var table = new Table();
-            table.Border = TableBorder.Minimal;
-            table.Width = 50;
+            var table = new Table {
+                Border = TableBorder.Minimal,
+                Width = 50
+            };
             AnsiConsole.Live(table).Start(ctx => {
                 table.AddColumn(new TableColumn("Название").Centered());
                 table.AddColumn(new TableColumn("Количество").Centered());
@@ -133,8 +129,6 @@ internal class GameRenderer {
     }
 
     public void HarvestCrops() { 
-
-        // Исправь в этом методе баг.
 
         AnsiConsole.Write(new Rule("Собираем урожай").Centered());
 
@@ -186,7 +180,7 @@ internal class GameRenderer {
         tableOfGained.AddColumn(new TableColumn("Количество").Centered());
 
         foreach (var kvp in kvpairs) {
-            int cnt = (int)(kvp.Value * (1.0 + rnd.NextDouble()));
+            int cnt = (int)(kvp.Value * (1.0 + rnd.NextDouble() / 2));
             _inventory.Add(kvp.Key, cnt);
             tableOfGained.AddRow(kvp.Key.Name, cnt.ToString());
         }
@@ -288,13 +282,22 @@ internal class GameRenderer {
             AnsiConsole.MarkupLine("Ваши работники:");
             var table = new Table();
             table.AddColumn("Название");
-            table.AddColumn("Производительность");
-            var minersOrderedByName = _autoMiners.OrderBy(miner => miner.Name);
-            foreach (var miner in minersOrderedByName) { table.AddRow(miner.Name, miner.CanCollect.ToString()); }
+            table.AddColumn("Количество");
+            var kvpairs = from miner in _autoMiners
+                          group miner by miner.Name into g
+                          select new KeyValuePair<string, int>(g.Key, g.Count());
+            foreach (var kvp in kvpairs) { table.AddRow(kvp.Key, kvp.Value.ToString()); }
             AnsiConsole.Write(table.Centered());
         } else if (printMiners) {
             AnsiConsole.MarkupLine("У вас нет работников в саду.");
         }
+    }
+
+    public void ViewInfo() {
+        AnsiConsole.Write(new Rule("Просмотр информации о растениях и работниках").Centered());
+        AnsiConsole.MarkupLine("Информация о растениях");
+        throw new NotImplementedException("Просмотр информации еще не доступен.");
+#warning Доработай просмотр справочной информации.
     }
 
     public void SwitchDay() {
@@ -327,6 +330,8 @@ internal enum PlayerAction {
     ViewInventory,
     [Display(Name = "Промотать время")]
     SwitchDay,
+    [Display(Name = "Показать информацию о растениях и работниках")]
+    ViewInfo,
     [Display(Name = "Закончить игру")]
     ExitGame
 }

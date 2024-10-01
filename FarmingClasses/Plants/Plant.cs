@@ -9,13 +9,13 @@ public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
 
     public DateOnly? PlantedTime { get; private set; }
 
-    protected Duration MaturationTime { get; private set; }
+    protected Duration? MaturationTime { get; private set; }
 
     public string Description { get; }
 
     public int BaseCost => 10;
 
-    public Plant(string name, DateOnly? plantedTime, Duration maturationTime, string description) {
+    public Plant(string name, DateOnly? plantedTime, Duration? maturationTime, string description) {
         ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
         if (plantedTime?.Year < 1900) throw new ArgumentOutOfRangeException(nameof(plantedTime), "The planting time is too early");
         if (maturationTime.Equals(default)) throw new DurationException(0, 0);
@@ -33,8 +33,9 @@ public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
     }
 
     public bool IsCollectable(DateOnly date) {
+        ArgumentNullException.ThrowIfNull(MaturationTime, nameof(MaturationTime));
         if (PlantedTime is null) return false;
-        DateOnly MatureDate = PlantedTime.Value.AddDays(MaturationTime.Days).AddMonths(MaturationTime.Months);
+        DateOnly MatureDate = PlantedTime.Value.AddDays(MaturationTime.Value.Days).AddMonths(MaturationTime.Value.Months);
         return MatureDate <= date;
     }
 

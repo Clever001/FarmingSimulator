@@ -7,7 +7,7 @@ namespace FarmingClasses.Plants;
 public class Vegetable : Plant {
     public VegetableType VegetableType { get; }
 
-    public Vegetable(string name, DateOnly? plantedTime, Duration maturationTime, string description, VegetableType type) 
+    public Vegetable(string name, DateOnly? plantedTime, Duration? maturationTime, string description, VegetableType type) 
         : base(name, plantedTime, maturationTime, description) {
         VegetableType = type;
     }
