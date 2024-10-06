@@ -17,17 +17,23 @@ public class FruitBuilder {
         _random = new();
     }
 
-    public Fruit GetApple(DateOnly? plantedDate = null) =>
+    public Fruit GetApple(DateOnly? plantedDate) =>
         new Fruit("Яблоко", plantedDate, new Duration(days: 45 + _random.Next(15)), "В реальности игры яблоки созревают за 45-60 дней.", TreeType.Deciduous);
+    public static Fruit GetApple() =>
+        new Fruit("Яблоко", null, null, "В реальности игры яблоки созревают за 45-60 дней.", TreeType.Deciduous);
 
-    public Fruit GetPear(DateOnly? plantedDate = null) =>
+    public Fruit GetPear(DateOnly? plantedDate) =>
         new Fruit("Груша", plantedDate, new Duration(days: 50 + _random.Next(20)), "В реальности игры груши вырастают за 50-70 дней.", TreeType.Deciduous);
+    public static Fruit GetPear() =>
+        new Fruit("Груша", null, null, "В реальности игры груши вырастают за 50-70 дней.", TreeType.Deciduous);
 
     public Fruit GetBlueberry(DateOnly? plantedDate = null) =>
         new Fruit("Черника", plantedDate, new Duration(days: 50 + _random.Next(20)), "В реальности игры черника растет за 50-70 дней.", TreeType.Shrub);
+    public static Fruit GetBlueberry() =>
+        new Fruit("Черника", null, null, "В реальности игры черника растет за 50-70 дней.", TreeType.Shrub);
 
-    public IEnumerable<IBuyable> GetAll() {
-        List<IBuyable> fruits = [GetApple(), GetPear(), GetBlueberry()];
+    public static IEnumerable<Fruit> GetAll() {
+        List<Fruit> fruits = [GetApple(), GetPear(), GetBlueberry()];
         return fruits;
     }
 }

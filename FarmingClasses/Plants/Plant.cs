@@ -18,7 +18,7 @@ public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
     public Plant(string name, DateOnly? plantedTime, Duration? maturationTime, string description) {
         ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
         if (plantedTime?.Year < 1900) throw new ArgumentOutOfRangeException(nameof(plantedTime), "The planting time is too early");
-        if (maturationTime.Equals(default)) throw new DurationException(0, 0);
+        if (maturationTime.HasValue && maturationTime.Value.Days == 0 && maturationTime.Value.Months == 0) throw new DurationException(0, 0);
         ArgumentException.ThrowIfNullOrWhiteSpace(description, nameof(description));
 
         Name = name;

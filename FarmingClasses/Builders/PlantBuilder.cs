@@ -2,20 +2,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FarmingClasses.Builders;
 public static class PlantBuilder {
     public static Plant GetPlant(string name) => name switch {
-        "Яблоко" => (new FruitBuilder()).GetApple(),
-        "Груша" => (new FruitBuilder()).GetPear(),
-        "Черника" => (new FruitBuilder()).GetBlueberry(),
-        "Картофель" => (new VegetableBuilder()).GetPotato(),
-        "Морковь" => (new VegetableBuilder()).GetCarrot(),
-        "Капуста" => (new VegetableBuilder()).GetCabbage(),
+        "Яблоко" => FruitBuilder.GetApple(),
+        "Груша" => FruitBuilder.GetPear(),
+        "Черника" => FruitBuilder.GetBlueberry(),
+        "Картофель" => VegetableBuilder.GetPotato(),
+        "Морковь" => VegetableBuilder.GetCarrot(),
+        "Капуста" => VegetableBuilder.GetCabbage(),
         _ => throw new ArgumentOutOfRangeException(nameof(name))
     };
+
+    public static IEnumerable<Plant> GetAll() => FruitBuilder.GetAll().Concat<Plant>(VegetableBuilder.GetAll());
 
     public static IEnumerable<Plant> GetRangeOfPlants(Plant plant, int cnt, DateOnly date) {
         ArgumentNullException.ThrowIfNull(plant, nameof(plant));
@@ -25,14 +25,11 @@ public static class PlantBuilder {
             List<Plant> fruits = new();
             switch (plant.Name) {
                 case "Яблоко":
-                    for (int i = 0; i != cnt; i++) { fruits.Add(builder.GetApple(date)); }
-                    break;
+                    for (int i = 0; i != cnt; i++) { fruits.Add(builder.GetApple(date)); } break;
                 case "Груша":
-                    for (int i = 0; i != cnt; i++) { fruits.Add(builder.GetPear(date)); }
-                    break;
+                    for (int i = 0; i != cnt; i++) { fruits.Add(builder.GetPear(date)); } break;
                 case "Черника":
-                    for (int i = 0; i != cnt; i++) { fruits.Add(builder.GetBlueberry(date)); }
-                    break;
+                    for (int i = 0; i != cnt; i++) { fruits.Add(builder.GetBlueberry(date)); } break;
                 default:
                     throw new ArgumentException("Было неправильно интерпретировано название растения.");
             }
@@ -42,14 +39,11 @@ public static class PlantBuilder {
             List<Plant> vegetables = new();
             switch (plant.Name) {
                 case "Картофель":
-                    for (int i = 0; i != cnt; i++) { vegetables.Add(builder.GetPotato(date)); }
-                    break;
+                    for (int i = 0; i != cnt; i++) { vegetables.Add(builder.GetPotato(date)); } break;
                 case "Морковь":
-                    for (int i = 0; i != cnt; i++) { vegetables.Add(builder.GetCarrot(date)); }
-                    break;
+                    for (int i = 0; i != cnt; i++) { vegetables.Add(builder.GetCarrot(date)); } break;
                 case "Капуста":
-                    for (int i = 0; i != cnt; i++) { vegetables.Add(builder.GetCabbage(date)); }
-                    break;
+                    for (int i = 0; i != cnt; i++) { vegetables.Add(builder.GetCabbage(date)); } break;
                 default:
                     throw new ArgumentException("Было неправильно интерпретировано название растения.");
             }

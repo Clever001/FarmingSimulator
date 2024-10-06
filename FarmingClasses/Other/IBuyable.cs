@@ -18,5 +18,7 @@ public interface IBuyable : IEquatable<IBuyable> {
     /// Базовая стоимость товара
     /// </summary>
     public int BaseCost { get; }
+
+    public string Description { get; }
     public int GetHashCode();
 }

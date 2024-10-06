@@ -15,6 +15,8 @@ public class AutoMiner : IBuyable {
     /// </summary>
     public int CanCollect { get; }
 
+    public string Description => $"Всего может собрать: {CanCollect} урожая.";
+
     public AutoMiner(string name, int baseCost, int canCollect) {
         ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(baseCost, nameof(baseCost));

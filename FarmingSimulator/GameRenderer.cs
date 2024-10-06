@@ -13,7 +13,6 @@ internal class GameRenderer {
     private Garden<Plant> _garden;
     private Inventory _inventory;
     private Shop _shop;
-    private AutoMinerBuilder _autoMinerBuilder;
     private VegetableBuilder _vegetableBuilder;
     private FruitBuilder _fruitBuilder;
 
@@ -24,7 +23,6 @@ internal class GameRenderer {
         ArgumentNullException.ThrowIfNull(args.Garden, nameof(args.Garden));
         ArgumentNullException.ThrowIfNull(args.Inventory, nameof(args.Inventory));
         ArgumentNullException.ThrowIfNull(args.Shop, nameof(args.Shop));
-        ArgumentNullException.ThrowIfNull(args.AutoMinerBuilder, nameof(args.AutoMinerBuilder));
         ArgumentNullException.ThrowIfNull(args.VegetableBuilder, nameof(args.VegetableBuilder));
         ArgumentNullException.ThrowIfNull(args.FruitBuilder, nameof(args.FruitBuilder));
 
@@ -34,7 +32,6 @@ internal class GameRenderer {
         _garden = args.Garden;
         _inventory = args.Inventory;
         _shop = args.Shop;
-        _autoMinerBuilder = args.AutoMinerBuilder;
         _vegetableBuilder = args.VegetableBuilder;
         _fruitBuilder = args.FruitBuilder;
     }
@@ -296,8 +293,24 @@ internal class GameRenderer {
     public void ViewInfo() {
         AnsiConsole.Write(new Rule("Просмотр информации о растениях и работниках").Centered());
         AnsiConsole.MarkupLine("Информация о растениях");
-        throw new NotImplementedException("Просмотр информации еще не доступен.");
-#warning Доработай просмотр справочной информации.
+        var plants = PlantBuilder.GetAll();
+
+        var plantsTable = new Table();
+        plantsTable.AddColumn(new TableColumn("Растение").Centered());
+        plantsTable.AddColumn(new TableColumn("Описание").LeftAligned());
+        foreach (Plant plant in plants) { plantsTable.AddRow(plant.Name, plant.Description); }
+        plantsTable.Border = TableBorder.Minimal;
+        AnsiConsole.Write(plantsTable.Centered());
+
+        AnsiConsole.MarkupLine("Информация о работниках");
+        var miners = AutoMinerBuilder.GetAll();
+
+        var minersTable = new Table();
+        minersTable.AddColumn(new TableColumn("Работник").Centered());
+        minersTable.AddColumn(new TableColumn("Описание").LeftAligned());
+        foreach (AutoMiner miner in miners) { minersTable.AddRow(miner.Name, miner.Description); }
+        minersTable.Border = TableBorder.Minimal;
+        AnsiConsole.Write(minersTable.Centered());
     }
 
     public void SwitchDay() {
