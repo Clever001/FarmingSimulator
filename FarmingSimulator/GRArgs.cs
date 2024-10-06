@@ -1,16 +1,13 @@
 ﻿using FarmingClasses.Builders;
 using FarmingClasses.Collections;
+using FarmingClasses.Logger;
 using FarmingClasses.Other;
 using FarmingClasses.Plants;
 using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FarmingSimulator;
-internal class GRArgs {
+internal sealed class GRArgs {
+    private Logger<string> _logger;
     public Player? Player { get; private set; } = null;
     public FarmingClasses.Other.Calendar? Calendar { get; private set; } = null;
     public List<AutoMiner>? AutoMiners { get; private set; } = null;
@@ -20,6 +17,11 @@ internal class GRArgs {
     public VegetableBuilder? VegetableBuilder { get; private set; } = null;
     public FruitBuilder? FruitBuilder { get; private set; } = null;
 
+    public GRArgs(Logger<string> logger) {
+        _logger = logger;
+        _logger.Log("Был создан объект типа GameRendererArguments");
+    }
+
     public void WriteStartInformation() {
         AnsiConsole.Write(new FigletText("Farming Simulator").Centered().Color(Color.Orange1));
 
@@ -28,6 +30,7 @@ internal class GRArgs {
         AnsiConsole.MarkupLine("Добро пожаловать в игру [#6BE400]\"Farming Simulator\"[/]!");
         AnsiConsole.MarkupLine("В этой консольной игре вы сможете управлять фермером. У вас будет свой огород и даже свои работники на нем!");
         AnsiConsole.MarkupLine("Перед началом игры вам потребуется заполнить [#6BE400]имя игрока[/].");
+        _logger.Log("Была записана стартовая информация о игре");
     }
 
     public void InitAdditionalGameInformation() {
@@ -35,6 +38,7 @@ internal class GRArgs {
 
         string name = AnsiConsole.Prompt(new TextPrompt<string>("Введите [bold]имя игрока[/]:"));
         Player = new(name);
+        _logger.Log($"Был создан игрок с именем {Player.Name}");
 
         AnsiConsole.Status()
             .Start("Загрузка...", ctx => {
@@ -56,5 +60,6 @@ internal class GRArgs {
 
                 AnsiConsole.MarkupLine("Инициализация завершена.");
             });
+        _logger.Log($"Были проинициализированы все классы, необходимые для игры");
     }
 }

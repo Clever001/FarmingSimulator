@@ -1,12 +1,14 @@
 ﻿using FarmingClasses.Builders;
 using FarmingClasses.Collections;
+using FarmingClasses.Logger;
 using FarmingClasses.Other;
 using FarmingClasses.Plants;
 using Spectre.Console;
 using System.ComponentModel.DataAnnotations;
 
 namespace FarmingSimulator;
-internal class GameRenderer {
+internal sealed class GameRenderer {
+    private Logger<string> _logger;
     private Player _player;
     private FarmingClasses.Other.Calendar _calendar;
     private List<AutoMiner> _autoMiners;
@@ -16,7 +18,7 @@ internal class GameRenderer {
     private VegetableBuilder _vegetableBuilder;
     private FruitBuilder _fruitBuilder;
 
-    public GameRenderer(GRArgs args) {
+    public GameRenderer(GRArgs args, Logger<string> logger) {
         ArgumentNullException.ThrowIfNull(args.Player, nameof(args.Player));
         ArgumentNullException.ThrowIfNull(args.Calendar, nameof(args.Calendar));
         ArgumentNullException.ThrowIfNull(args.AutoMiners, nameof(args.AutoMiners));
@@ -34,9 +36,13 @@ internal class GameRenderer {
         _shop = args.Shop;
         _vegetableBuilder = args.VegetableBuilder;
         _fruitBuilder = args.FruitBuilder;
+        _logger = logger;
+        _logger.Log("Был проинициализирован объект GameRenderer");
     }
 
     public async Task MainCycle() {
+        _logger.Log("Начало основного цикла программы");
+
         _inventory.Add(_vegetableBuilder.GetPotato(), 3);
         for (int i = 0; i != 10; ++i) _garden.Add(_vegetableBuilder.GetPotato(_calendar.CurDay));
         //for (int i = 0; i != 3; ++i) _garden.Add(_vegetableBuilder.GetPotato(_calendar.CurDay));
@@ -44,6 +50,8 @@ internal class GameRenderer {
         var sortTask = _garden.SortAsync();
 
         while (!_player.IsBankrupt) {
+            _logger.Log($"Начался новый день, а именно: {_calendar.CurDay}");
+
             // ----- Печать календаря ----- //
             AnsiConsole.Write(new Rule("Новый день").Centered());
             var cal = new Spectre.Console.Calendar(_calendar.Year, _calendar.Month);
@@ -54,6 +62,7 @@ internal class GameRenderer {
 
             var today = _calendar.CurDay;
             while (_calendar.CurDay.Equals(today)) {
+                _logger.Log("Игрок начал выбирать игровое действие");
                 // ----- Выбор действия ----- //
                 var selection = AnsiConsole.Prompt(
                     new SelectionPrompt<PlayerAction>()
@@ -90,6 +99,7 @@ internal class GameRenderer {
                     case PlayerAction.ViewInfo:
                         ViewInfo();break;
                     default:
+                        _logger.Log("Игрок выбрал завершить игру");
                         AnsiConsole.MarkupLine("[#6BE400]Выход из игры.[/]");
                         await Task.Delay(1000);
                         return;
@@ -99,6 +109,8 @@ internal class GameRenderer {
     }
 
     public void ViewGarden() {
+        _logger.Log("Начало вывода содержимого сада");
+
         AnsiConsole.Write(new Rule("Вывод содержимого огорода").Centered());
         AnsiConsole.MarkupLineInterpolated($"Количество культур в огороде: [green]{_garden.Count}[/].");
         if (_garden.Count > 0) {
@@ -125,7 +137,8 @@ internal class GameRenderer {
         }
     }
 
-    public void HarvestCrops() { 
+    public void HarvestCrops() {
+        _logger.Log("Начало сбора урожая");
 
         AnsiConsole.Write(new Rule("Собираем урожай").Centered());
 
@@ -161,7 +174,7 @@ internal class GameRenderer {
 
         tableOfCollected.AddColumn(new TableColumn("Растение").Centered());
         tableOfCollected.AddColumn(new TableColumn("Количество").Centered());
-
+        
         foreach (var kvp in kvpairs) {
             tableOfCollected.AddRow(kvp.Key.Name, kvp.Value.ToString());
         }
@@ -176,8 +189,10 @@ internal class GameRenderer {
         tableOfGained.AddColumn(new TableColumn("Растение").Centered());
         tableOfGained.AddColumn(new TableColumn("Количество").Centered());
 
+        _logger.Log("Игроку удалось собрать: ");
         foreach (var kvp in kvpairs) {
             int cnt = (int)(kvp.Value * (1.0 + rnd.NextDouble() / 2));
+            _logger.Log($"{kvp.Key.Name} в количестве {cnt} шт.");
             _inventory.Add(kvp.Key, cnt);
             tableOfGained.AddRow(kvp.Key.Name, cnt.ToString());
         }
@@ -186,6 +201,7 @@ internal class GameRenderer {
     }
 
     public void Plant() {
+        _logger.Log("Начало посадки растений");
         AnsiConsole.Write(new Rule("Посадка растения").Centered());
 
         string plantName;
@@ -215,19 +231,24 @@ internal class GameRenderer {
                         else if (n > maxCnt) return Spectre.Console.ValidationResult.Error("Столько растений нет в инвентаре");
                         else return Spectre.Console.ValidationResult.Success();
                     }));
+            _logger.Log($"Игрок решил посадить {plantName} в количестве {cnt} шт.");
 
             _garden.AddRange(PlantBuilder.GetRangeOfPlants(plant, cnt, _calendar.CurDay));
             _inventory.Remove(plant, cnt);
         } while (plantName != "Ничего не садить");
+        _logger.Log("Начало сортировки содержимого огорода");
         _garden.Sort();
+        _logger.Log("Содержимое огорода отсортировано");
     } 
 
     public void ViewShop() {
+        _logger.Log("Игрок решил пойти в магазин");
+
         AnsiConsole.Write(new Rule("Магазин").Centered());
-        
 
         string selectionName;
         do {
+            _logger.Log("Вывод цен");
             AnsiConsole.MarkupLineInterpolated($"На данный момент у вас имеется {_player.Capital} денежных единиц.");
 
             var tableOfCosts = new Table();
@@ -246,7 +267,10 @@ internal class GameRenderer {
                 .PageSize(10)
                 .MoreChoicesText("[grey](Двигайтесь вверх или вниз, чтобы увидеть больше вариантов)[/]")
                 .AddChoices(_shop.GetGoods().Select(x => x.Name).Concat(["Ничего не покупать"])));
-            if (selectionName == "Ничего не покупать") continue;
+            if (selectionName == "Ничего не покупать") {
+                _logger.Log("Выход из магазина");
+                continue; 
+            }
 
             var good = GoodBuilder.GetGood(selectionName);
             if (_shop.Buy(good, _player)) {
@@ -254,6 +278,7 @@ internal class GameRenderer {
                 else if (good is AutoMiner am) _autoMiners.Add(am);
                 else throw new ArgumentNullException(nameof(good));
                 AnsiConsole.MarkupLineInterpolated($"Товар \"{good.Name}\" был добавлен в инвентарь. Остаточный баланс: {_player.Capital}");
+                _logger.Log($"Товар \"{good.Name}\" был добавлен в инвентарь. Остаточный баланс: {_player.Capital}");
             }
             else {
                 AnsiConsole.MarkupLineInterpolated($"У вас недостаточно средств для покупки товара.");
@@ -262,6 +287,7 @@ internal class GameRenderer {
     }
 
     public void ViewInventory(bool printRule = true, bool printMiners = true) {
+        _logger.Log($"Вывод содержимого инвентаря, PrintRule: {printRule} PrintMiners: {printMiners}");
         if (printRule) AnsiConsole.Write(new Rule("Вывод инвентаря").Centered());
         var sortedInventory = _inventory.GetSortedInventory();
         if (sortedInventory.Any()) {
@@ -291,6 +317,8 @@ internal class GameRenderer {
     }
 
     public void ViewInfo() {
+        _logger.Log("Вывод справочной информации");
+
         AnsiConsole.Write(new Rule("Просмотр информации о растениях и работниках").Centered());
         AnsiConsole.MarkupLine("Информация о растениях");
         var plants = PlantBuilder.GetAll();
@@ -314,6 +342,8 @@ internal class GameRenderer {
     }
 
     public void SwitchDay() {
+        _logger.Log("Смена дня игроком");
+
         AnsiConsole.Write(new Rule("Переключение времени").Centered());
         string periodSelection = AnsiConsole.Prompt(
             new TextPrompt<string>("Вы хотите промотать некоторое количество дней или месяцев?")
