@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FarmingSimulator;
 internal sealed class GameRenderer {
-    private Logger<string> _logger;
+    private Logger _logger;
     private Player _player;
     private FarmingClasses.Other.Calendar _calendar;
     private List<AutoMiner> _autoMiners;
@@ -18,7 +18,7 @@ internal sealed class GameRenderer {
     private VegetableBuilder _vegetableBuilder;
     private FruitBuilder _fruitBuilder;
 
-    public GameRenderer(GRArgs args, Logger<string> logger) {
+    public GameRenderer(GRArgs args, Logger logger) {
         ArgumentNullException.ThrowIfNull(args.Player, nameof(args.Player));
         ArgumentNullException.ThrowIfNull(args.Calendar, nameof(args.Calendar));
         ArgumentNullException.ThrowIfNull(args.AutoMiners, nameof(args.AutoMiners));

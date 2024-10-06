@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace FarmingClasses.Logger;
-public class Logger<T> {
+public class Logger {
     public event Action<string>? LogEvent;
 
-    public void Log(T message) {
+    public void Log<T>(T message) {
         ArgumentNullException.ThrowIfNull(message, nameof(message));
 #pragma warning disable CS8604 
         LogEvent?.Invoke($"{DateTime.Now}: {message}\n");

@@ -1,7 +1,7 @@
 ﻿using FarmingClasses.Logger;
 using FarmingSimulator;
 
-var logger = new Logger<string>();
+var logger = new Logger();
 
 using var fileLog = new FileLogOutput("my_log.txt", 1024);
 logger.LogEvent += fileLog.WriteLog;

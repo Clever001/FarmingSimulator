@@ -7,7 +7,7 @@ using Spectre.Console;
 
 namespace FarmingSimulator;
 internal sealed class GRArgs {
-    private Logger<string> _logger;
+    private Logger _logger;
     public Player? Player { get; private set; } = null;
     public FarmingClasses.Other.Calendar? Calendar { get; private set; } = null;
     public List<AutoMiner>? AutoMiners { get; private set; } = null;
@@ -17,7 +17,7 @@ internal sealed class GRArgs {
     public VegetableBuilder? VegetableBuilder { get; private set; } = null;
     public FruitBuilder? FruitBuilder { get; private set; } = null;
 
-    public GRArgs(Logger<string> logger) {
+    public GRArgs(Logger logger) {
         _logger = logger;
         _logger.Log("Был создан объект типа GameRendererArguments");
     }
