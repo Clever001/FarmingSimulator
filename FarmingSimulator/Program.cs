@@ -1,10 +1,20 @@
-﻿using FarmingClasses.Logger;
+﻿using FarmingClasses.Config;
+using FarmingClasses.Logger;
 using FarmingSimulator;
+using Spectre.Console;
+
+var config = ConfigInfo.UnserializeConfig();
+if (config is null) {
+    AnsiConsole.MarkupLine("[red]Не был проинициализирован конфигурационный файл.[/]");
+    return;
+}
 
 var logger = new Logger();
 
-using var fileLog = new FileLogOutput("my_log.txt", 1024);
-logger.LogEvent += fileLog.WriteLog;
+if (config.TypeLog) {
+    using var fileLog = new FileLogOutput(config.LogFilePath, 1024);
+    logger.LogEvent += fileLog.WriteLog;
+}
 
 #if DEBUG
 using var consoleLog = new ConsoleLogOutput();
