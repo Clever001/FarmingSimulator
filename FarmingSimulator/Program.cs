@@ -18,17 +18,20 @@ if (config.TypeLog) {
 }
 else fileLog = null;
 
-#if DEBUG
-using var consoleLog = new ConsoleLogOutput();
-logger.LogEvent += consoleLog.WriteLog;
-#endif
+try {
+    #if DEBUG
+        using var consoleLog = new ConsoleLogOutput();
+        logger.LogEvent += consoleLog.WriteLog;
+    #endif
 
-logger.Log("Игра была запущена");
+    logger.Log("Игра была запущена");
 
-var gameBuilder = new GRArgs(logger);
-gameBuilder.WriteStartInformation();
-gameBuilder.InitAdditionalGameInformation();
+    var gameBuilder = new GRArgs(logger);
+    gameBuilder.WriteStartInformation();
+    gameBuilder.InitAdditionalGameInformation();
 
-var gameRenderer = new GameRenderer(gameBuilder, logger);
-await gameRenderer.MainCycle();
-fileLog?.Dispose();
+    var gameRenderer = new GameRenderer(gameBuilder, logger);
+    await gameRenderer.MainCycle();
+} finally {
+    fileLog?.Dispose();
+}
