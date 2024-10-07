@@ -11,10 +11,12 @@ if (config is null) {
 
 var logger = new Logger();
 
+FileLogOutput? fileLog;
 if (config.TypeLog) {
-    using var fileLog = new FileLogOutput(config.LogFilePath, 1024);
+    fileLog = new FileLogOutput(config.LogFilePath, 1024);
     logger.LogEvent += fileLog.WriteLog;
 }
+else fileLog = null;
 
 #if DEBUG
 using var consoleLog = new ConsoleLogOutput();
@@ -29,3 +31,4 @@ gameBuilder.InitAdditionalGameInformation();
 
 var gameRenderer = new GameRenderer(gameBuilder, logger);
 await gameRenderer.MainCycle();
+fileLog?.Dispose();
