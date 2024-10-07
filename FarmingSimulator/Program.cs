@@ -18,12 +18,12 @@ if (config.TypeLog) {
 }
 else fileLog = null;
 
-try {
-    #if DEBUG
-        using var consoleLog = new ConsoleLogOutput();
-        logger.LogEvent += consoleLog.WriteLog;
-    #endif
+#if DEBUG
+    using var consoleLog = new ConsoleLogOutput();
+    logger.LogEvent += consoleLog.WriteLog;
+#endif
 
+try {
     logger.Log("Игра была запущена");
 
     var gameBuilder = new GRArgs(logger);
