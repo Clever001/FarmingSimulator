@@ -4,18 +4,21 @@ using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FarmingClasses.Plants;
-public class Vegetable : Plant {
+public class Vegetable : Plant
+{
     public VegetableType VegetableType { get; }
 
-    public Vegetable(string name, DateOnly? plantedTime, Duration? maturationTime, string description, VegetableType type) 
-        : base(name, plantedTime, maturationTime, description) {
+    public Vegetable(string name, DateOnly? plantedTime, Duration? maturationTime, string description, VegetableType type)
+        : base(name, plantedTime, maturationTime, description)
+    {
         VegetableType = type;
     }
 
     public override object Clone() => new Vegetable(Name, PlantedTime, MaturationTime, Description, VegetableType);
 }
 
-public enum VegetableType {
+public enum VegetableType
+{
     [Display(Name = "Корнеплодный")]
     RootVegetables,
     [Display(Name = "Плодовый")]

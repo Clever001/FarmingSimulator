@@ -4,7 +4,8 @@ using System;
 
 namespace FarmingClasses.Plants;
 
-public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
+public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant>
+{
     public string Name { get; }
 
     public DateOnly? PlantedTime { get; private set; }
@@ -15,7 +16,8 @@ public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
 
     public int BaseCost => 10;
 
-    public Plant(string name, DateOnly? plantedTime, Duration? maturationTime, string description) {
+    public Plant(string name, DateOnly? plantedTime, Duration? maturationTime, string description)
+    {
         ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
         if (plantedTime?.Year < 1900) throw new ArgumentOutOfRangeException(nameof(plantedTime), "The planting time is too early");
         if (maturationTime.HasValue && maturationTime.Value.Days == 0 && maturationTime.Value.Months == 0) throw new DurationException(0, 0);
@@ -27,12 +29,14 @@ public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
         Description = description;
     }
 
-    public void ChangePlantAndMaturationTime(DateOnly planted, Duration maturation) {
+    public void ChangePlantAndMaturationTime(DateOnly planted, Duration maturation)
+    {
         PlantedTime = planted;
         MaturationTime = maturation;
     }
 
-    public bool IsCollectable(DateOnly date) {
+    public bool IsCollectable(DateOnly date)
+    {
         ArgumentNullException.ThrowIfNull(MaturationTime, nameof(MaturationTime));
         if (PlantedTime is null) return false;
         DateOnly MatureDate = PlantedTime.Value.AddDays(MaturationTime.Value.Days).AddMonths(MaturationTime.Value.Months);
@@ -45,21 +49,25 @@ public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant> {
     /// Проверяет равны ли два растения. 
     /// Проверяется только поле Name, так как другие поля не несут смысловой нагрузки.
     /// </summary>
-    public bool Equals(Plant? other) {
+    public bool Equals(Plant? other)
+    {
         if (other is null) return false;
 
         return Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase);
     }
 
-    public bool Equals(IBuyable? other) {
-        if (other is Plant pl) {
+    public bool Equals(IBuyable? other)
+    {
+        if (other is Plant pl)
+        {
             return Name.Equals(pl.Name, StringComparison.OrdinalIgnoreCase)
                    && BaseCost == pl.BaseCost;
         }
         return false;
     }
 
-    public override int GetHashCode() {
+    public override int GetHashCode()
+    {
         return HashCode.Combine(Name, BaseCost);
     }
 }

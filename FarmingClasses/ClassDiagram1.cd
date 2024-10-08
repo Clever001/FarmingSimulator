@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="FarmingClasses.Builders.AutoMinerBuilder" Collapsed="true">
+    <Position X="14" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAAAAAAACAAEAAiAAAAAAAAA=</HashCode>
+      <FileName>Builders\AutoMinerBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FarmingClasses.Builders.FruitBuilder" Collapsed="true">
+    <Position X="15.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAQAAAAAAAAAAAAAAAAAAAgAAAgAAAAE=</HashCode>
+      <FileName>Builders\FruitBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FarmingClasses.Builders.GoodBuilder" Collapsed="true">
+    <Position X="19.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Builders\GoodBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FarmingClasses.Builders.PlantBuilder" Collapsed="true">
+    <Position X="17.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAEAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Builders\PlantBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FarmingClasses.Builders.VegetableBuilder" Collapsed="true">
+    <Position X="14" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAABAAAAAgAAAAAAAAAAAAAAAAgAAAAAAAAE=</HashCode>
+      <FileName>Builders\VegetableBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FarmingClasses.Collections.Garden&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAABAAEAASABAQAAAQJAQAAAAAAAAEAACBAARUIAA=</HashCode>
+      <FileName>Collections\Garden.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="FarmingClasses.Collections.Inventory" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="12.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAABAQCAAABAQAAAAAAACEAAAAAQRQIAA=</HashCode>
+      <FileName>Collections\Inventory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="FarmingClasses.Collections.Node&lt;T&gt;" Collapsed="true">
+    <Position X="15.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Collections\Node.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FarmingClasses.Collections.Shop" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="12.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAACCAAABAAAAAAAAAAAAAAAAAGAAAAAAAAAAA=</HashCode>
+      <FileName>Collections\Shop.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="FarmingClasses.Config.ConfigInfo" Collapsed="true">
+    <Position X="17.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAgAAAA=</HashCode>
+      <FileName>Config\ConfigInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FarmingClasses.Exceptions.DurationException" Collapsed="true">
+    <Position X="12.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEYAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\DurationException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FarmingClasses.Logger.ConsoleLogOutput" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="19.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Logger\ConsoleLogOutput.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="FarmingClasses.Logger.Logger" Collapsed="true">
+    <Position X="14" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Logger\Logger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FarmingClasses.Other.AutoMiner" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="12.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAgAAAAAQAASAAAIACAAAAAAAAAAA=</HashCode>
+      <FileName>Other\AutoMiner.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="FarmingClasses.Other.Calendar" Collapsed="true">
+    <Position X="15.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgJAgAAAAEAAAAAAAAAAAAAIAEAAAAAAAAAAA=</HashCode>
+      <FileName>Other\Calendar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FarmingClasses.Other.Player" Collapsed="true">
+    <Position X="19.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAEABAAAAQAAAAAAAgAAAIAAIAAAAA=</HashCode>
+      <FileName>Other\Player.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FarmingClasses.Plants.Fruit" Collapsed="true">
+    <Position X="9.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Plants\Fruit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FarmingClasses.Plants.Plant" Collapsed="true">
+    <Position X="8.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAgAABAARCAQAAAIAAABAAAAAAABA=</HashCode>
+      <FileName>Plants\Plant.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FarmingClasses.Plants.Vegetable" Collapsed="true">
+    <Position X="7.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAABA=</HashCode>
+      <FileName>Plants\Vegetable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FarmingClasses.Logger.FileLogOutput" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAJAAACAAAAQAAEAAQIAAAAAAAAAAAAAAAAAMAAA=</HashCode>
+      <FileName>Logger\FileLogOutput.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Interface Name="FarmingClasses.Logger.ILogOutput" Collapsed="true">
+    <Position X="14" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Logger\ILogOutput.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FarmingClasses.Other.IBuyable" Collapsed="true">
+    <Position X="12.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAQAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Other\IBuyable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="FarmingClasses.Plants.VegetableType" Collapsed="true">
+    <Position X="14" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAQAAAAAAAACAAAAAIBAgAAAAA=</HashCode>
+      <FileName>Plants\Vegetable.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="TreeType" Collapsed="true">
+    <Position X="12.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIEAAAAAAAAAAAAAAAwAQAAAAAAAAAABA=</HashCode>
+      <FileName>Plants\TreeType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
