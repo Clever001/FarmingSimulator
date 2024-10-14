@@ -13,7 +13,7 @@ var logger = new Logger();
 
 FileLogOutput? fileLog;
 if (config.TypeLog) {
-    fileLog = new FileLogOutput(config.LogFilePath, 1024);
+    fileLog = new FileLogOutput(config.LogFilePath, 5120);
     logger.LogEvent += fileLog.WriteLog;
 }
 else fileLog = null;
