@@ -17,6 +17,12 @@ public class Garden<T> : ICollection<T>, IEnumerable<T> where T : Plant {
         _end = null;
     }
 
+    public Garden(IEnumerable<T> list) : this() {
+        foreach (var item in list) {
+            AddLast(item);
+        }
+    }
+
     public int Count => _count;
 
     public bool IsReadOnly => false;

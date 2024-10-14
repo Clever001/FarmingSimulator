@@ -24,6 +24,14 @@ public class Shop : IEnumerable<KeyValuePair<IBuyable, int>> {
         }
     }
 
+    public Shop(IEnumerable<KeyValuePair<IBuyable, int>> items) {
+        ArgumentNullException.ThrowIfNull(items, nameof(items));
+
+        foreach (var item in items) {
+            _costs.Add(item.Key, item.Value);
+        }
+    }
+
     public int this[IBuyable good] => _costs[good];
 
     public bool Buy(IBuyable good, Player player) {

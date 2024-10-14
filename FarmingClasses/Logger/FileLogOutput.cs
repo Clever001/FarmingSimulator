@@ -31,7 +31,7 @@ public sealed class FileLogOutput : ILogOutput, IDisposable {
 
     public void WriteLog(string message) {
         int sizeOfMessage = sizeof(char) * message.Length;
-
+        
         lock (_sizeLock) {
             _curSize += sizeOfMessage;
             _logQueue.Enqueue(message);

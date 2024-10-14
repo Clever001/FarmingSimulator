@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace FarmingClasses.Other;
-public class Player {
+public class Player : IComparable<Player> {
     public string Name { get; }
     public int Capital { get; private set; }
 
@@ -31,5 +31,19 @@ public class Player {
 
     public override string ToString() {
         return $"Игрок {Name} имеет при себе {Capital} денег.";
+    }
+
+    public override int GetHashCode() {
+        return HashCode.Combine(Name);
+    }
+
+    public override bool Equals(object? obj) {
+        if (obj is Player pl) return pl.CompareTo(this) == 0;
+        else return false;
+    }
+
+    public int CompareTo(Player? other) {
+        if (other is null) return 1;
+        return Name.CompareTo(other.Name);
     }
 }

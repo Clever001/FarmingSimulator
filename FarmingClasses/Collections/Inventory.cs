@@ -9,6 +9,12 @@ namespace FarmingClasses.Collections;
 public class Inventory : ICollection<IBuyable> {
     private Dictionary<IBuyable, int> _inventory = new();
 
+    public Inventory(IEnumerable<KeyValuePair<IBuyable, int>> items) {
+        foreach (var kvp in items) {
+            Add(kvp.Key, kvp.Value);
+        }
+    }
+
     public int Count => _inventory.Count;
 
     public bool IsReadOnly => false;
