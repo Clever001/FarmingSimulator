@@ -43,8 +43,8 @@ public sealed class FileLogOutput : ILogOutput, IDisposable {
         while (!cancellationToken.IsCancellationRequested) {
             lock (_sizeLock) {
                 if (_curSize > _MAX_BUFFER_SIZE) {
-                    while (_logQueue.TryDequeue(out string logMessage)) {
-                        logBuilder.AppendLine(logMessage);
+                    while (_logQueue.TryDequeue(out string? logMessage)) {
+                        if (logMessage is not null) logBuilder.AppendLine(logMessage);
                     }
                     _curSize = 0;
                 }
@@ -60,8 +60,8 @@ public sealed class FileLogOutput : ILogOutput, IDisposable {
     private void Flush() {
         if (_curSize > 0) {
             StringBuilder logBuilder = new();
-            while (_logQueue.TryDequeue(out string logMessage)) {
-                logBuilder.AppendLine(logMessage);
+            while (_logQueue.TryDequeue(out string? logMessage)) {
+                if (logMessage is not null) logBuilder.AppendLine(logMessage);
             }
 
             _curSize = 0;

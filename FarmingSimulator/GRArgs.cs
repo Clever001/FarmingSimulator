@@ -3,6 +3,7 @@ using FarmingClasses.Collections;
 using FarmingClasses.Logger;
 using FarmingClasses.Other;
 using FarmingClasses.Plants;
+using FarmingClasses.Serialization;
 using Spectre.Console;
 
 namespace FarmingSimulator;
@@ -16,6 +17,7 @@ internal sealed class GRArgs {
     public Shop? Shop { get; private set; } = null;
     public VegetableBuilder? VegetableBuilder { get; private set; } = null;
     public FruitBuilder? FruitBuilder { get; private set; } = null;
+    public SavesController SavesController { get; private set; } = new(path: "game_saves.json");
 
     public GRArgs(Logger logger) {
         _logger = logger;
@@ -36,9 +38,16 @@ internal sealed class GRArgs {
     public void InitAdditionalGameInformation() {
         AnsiConsole.Write(new Rule("Запуск игры").Centered());
 
-        string name = AnsiConsole.Prompt(new TextPrompt<string>("Введите [bold]имя игрока[/]:"));
-        Player = new(name);
-        _logger.Log($"Был создан игрок с именем {Player.Name}");
+        var selection = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+              .Title("Загрузить сохранение игры или начать новую игру?")
+              .AddChoices(["Начать новую игру", "Загрузить сохранение"]));
+
+        if (selection == "Начать новую игру" || !LoadSave()) {
+            CreatePlayer();
+        } else {
+            return;
+        }
 
         AnsiConsole.Status()
             .Start("Загрузка...", ctx => {
@@ -61,5 +70,44 @@ internal sealed class GRArgs {
                 AnsiConsole.MarkupLine("Инициализация завершена.");
             });
         _logger.Log($"Были проинициализированы все классы, необходимые для игры");
+    }
+
+    public void CreatePlayer() {
+        string name = AnsiConsole.Prompt(new TextPrompt<string>("Введите [bold]имя игрока[/]:"));
+        Player = new(name);
+        _logger.Log($"Был создан игрок с именем {Player.Name}");
+    }
+
+    public bool LoadSave() {
+        if (SavesController.LoadSaves()) {
+            AnsiConsole.MarkupLine("[green]Файл с сохранениями загружен успешно.[/]");
+        } else {
+            AnsiConsole.MarkupLine("[red]Не удалось загрузить файл с сохранениями. Придется создать нового игрока.[/]");
+            return false;
+        }
+
+        if (SavesController.Count == 0 ) {
+            AnsiConsole.MarkupLine("[red]В файле не оказалось сохранений. Придется создать нового игрока.[/]");
+            return false;
+        }
+        var playersTable = new Table().Centered();
+        playersTable.AddColumn(new TableColumn("Имя игрока").Centered());
+        playersTable.AddColumn(new TableColumn("Капитал").Centered());
+        foreach (Player player in SavesController.GetPlayers()) {
+            playersTable.AddRow(player.Name, player.Capital.ToString());
+        }
+        AnsiConsole.Write(new Rule("Вывод сохранений").Centered());
+        AnsiConsole.Write(playersTable);
+
+        string selectionName = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+              .Title("Какое сохранение загрузить?")
+              .AddChoices(SavesController.GetPlayers().Select(p => p.Name)));
+
+        Player selectedPlayer = SavesController.GetPlayers().First(p => p.Name.Equals(selectionName));
+        GameSave save = SavesController[selectedPlayer];
+
+        AnsiConsole.MarkupLine("[green]Сохранение успешно загружено.[/]");
+        return true;
     }
 }

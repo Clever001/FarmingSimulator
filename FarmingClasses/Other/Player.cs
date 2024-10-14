@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace FarmingClasses.Other;
-public class Player : IComparable<Player> {
+public class Player : IComparable<Player>, IEquatable<Player> {
+    [JsonProperty]
     public string Name { get; }
+    [JsonProperty]
     public int Capital { get; private set; }
 
     public Player(string name) {
@@ -38,12 +41,17 @@ public class Player : IComparable<Player> {
     }
 
     public override bool Equals(object? obj) {
-        if (obj is Player pl) return pl.CompareTo(this) == 0;
+        if (obj is Player pl) return Equals(pl);
         else return false;
     }
 
     public int CompareTo(Player? other) {
         if (other is null) return 1;
         return Name.CompareTo(other.Name);
+    }
+
+    public bool Equals(Player? other) {
+        if (other is null) return false;
+        return Name.Equals(other.Name);
     }
 }

@@ -3,6 +3,7 @@ using FarmingClasses.Collections;
 using FarmingClasses.Logger;
 using FarmingClasses.Other;
 using FarmingClasses.Plants;
+using FarmingClasses.Serialization;
 using Spectre.Console;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,6 +18,7 @@ internal sealed class GameRenderer {
     private Shop _shop;
     private VegetableBuilder _vegetableBuilder;
     private FruitBuilder _fruitBuilder;
+    private SavesController _savesController;
 
     public GameRenderer(GRArgs args, Logger logger) {
         ArgumentNullException.ThrowIfNull(args.Player, nameof(args.Player));
@@ -27,6 +29,7 @@ internal sealed class GameRenderer {
         ArgumentNullException.ThrowIfNull(args.Shop, nameof(args.Shop));
         ArgumentNullException.ThrowIfNull(args.VegetableBuilder, nameof(args.VegetableBuilder));
         ArgumentNullException.ThrowIfNull(args.FruitBuilder, nameof(args.FruitBuilder));
+        ArgumentNullException.ThrowIfNull(args.SavesController, nameof(args.SavesController));
 
         _player = args.Player;
         _calendar = args.Calendar;
@@ -36,6 +39,7 @@ internal sealed class GameRenderer {
         _shop = args.Shop;
         _vegetableBuilder = args.VegetableBuilder;
         _fruitBuilder = args.FruitBuilder;
+        _savesController = args.SavesController;
         _logger = logger;
         _logger.Log("Был проинициализирован объект GameRenderer");
     }
@@ -72,7 +76,8 @@ internal sealed class GameRenderer {
                         .AddChoices(new[] {
                         PlayerAction.ViewGarden, PlayerAction.HarvestCrops, PlayerAction.Plant,
                         PlayerAction.BuySmth, PlayerAction.SellSmth, PlayerAction.ViewInventory, 
-                        PlayerAction.SwitchDay, PlayerAction.ViewInfo, PlayerAction.ExitGame
+                        PlayerAction.SwitchDay, PlayerAction.ViewInfo, PlayerAction.SaveGame, 
+                        PlayerAction.ExitGame
                         })
                         .UseConverter(x => x.GetType()
                                             .GetMember(x.ToString())
@@ -100,6 +105,8 @@ internal sealed class GameRenderer {
                         SwitchDay();break;
                     case PlayerAction.ViewInfo:
                         ViewInfo();break;
+                    case PlayerAction.SaveGame:
+                        SaveGame();break;
                     default:
                         _logger.Log("Игрок выбрал завершить игру");
                         AnsiConsole.MarkupLine("[#6BE400]Выход из игры.[/]");
@@ -425,6 +432,12 @@ internal sealed class GameRenderer {
         if (periodSelection == "Дни") _calendar.AddDays(cnt);
         else _calendar.AddMonths(cnt);
     }
+
+    public void SaveGame() {
+        GameSave save = new(_calendar, _autoMiners, _garden, _inventory, _shop);
+        _savesController.SaveGame(_player, save);
+        AnsiConsole.MarkupLineInterpolated($"[green]Игра успешно сохранена.[/] Игрок: {_player.Name}.");
+    }
 }
 
 internal enum PlayerAction {
@@ -444,6 +457,8 @@ internal enum PlayerAction {
     SwitchDay,
     [Display(Name = "Показать информацию о растениях и работниках")]
     ViewInfo,
+    [Display(Name = "Сохранить игру")]
+    SaveGame,
     [Display(Name = "Закончить игру")]
     ExitGame
 }
