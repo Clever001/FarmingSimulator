@@ -71,8 +71,8 @@ internal sealed class GameRenderer {
                         .MoreChoicesText("[grey](Двигайтесь вверх или вниз, чтобы увидеть больше вариантов)[/]")
                         .AddChoices(new[] {
                         PlayerAction.ViewGarden, PlayerAction.HarvestCrops, PlayerAction.Plant,
-                        PlayerAction.ViewShop, PlayerAction.ViewInventory, PlayerAction.SwitchDay,
-                        PlayerAction.ViewInfo, PlayerAction.ExitGame
+                        PlayerAction.BuySmth, PlayerAction.SellSmth, PlayerAction.ViewInventory, 
+                        PlayerAction.SwitchDay, PlayerAction.ViewInfo, PlayerAction.ExitGame
                         })
                         .UseConverter(x => x.GetType()
                                             .GetMember(x.ToString())
@@ -90,8 +90,10 @@ internal sealed class GameRenderer {
                         HarvestCrops();break;
                     case PlayerAction.Plant:
                         Plant();break;
-                    case PlayerAction.ViewShop:
-                        ViewShop();break;
+                    case PlayerAction.BuySmth:
+                        BuySmth();break;
+                    case PlayerAction.SellSmth:
+                        SellSmth();break;
                     case PlayerAction.ViewInventory:
                         ViewInventory();break;
                     case PlayerAction.SwitchDay:
@@ -191,7 +193,7 @@ internal sealed class GameRenderer {
 
         _logger.Log("Игроку удалось собрать: ");
         foreach (var kvp in kvpairs) {
-            int cnt = (int)(kvp.Value * (1.0 + rnd.NextDouble() / 2));
+            int cnt = (int)(kvp.Value * (1.0 + rnd.NextDouble())) + 1;
             _logger.Log($"{kvp.Key.Name} в количестве {cnt} шт.");
             _inventory.Add(kvp.Key, cnt);
             tableOfGained.AddRow(kvp.Key.Name, cnt.ToString());
@@ -206,7 +208,7 @@ internal sealed class GameRenderer {
 
         string plantName;
         do {
-            ViewInventory(printRule: false, printMiners: false);
+            ViewInventory(printRule: false, printMiners: false, printCapital: false);
             var items = _inventory.GetSortedKeys().Select(x => x.Name);
 
             if (!items.Any()) {
@@ -241,7 +243,7 @@ internal sealed class GameRenderer {
         _logger.Log("Содержимое огорода отсортировано");
     } 
 
-    public void ViewShop() {
+    public void BuySmth() {
         _logger.Log("Игрок решил пойти в магазин");
 
         AnsiConsole.Write(new Rule("Магазин").Centered());
@@ -286,9 +288,74 @@ internal sealed class GameRenderer {
         } while (selectionName != "Ничего не покупать");
     }
 
-    public void ViewInventory(bool printRule = true, bool printMiners = true) {
+    public void SellSmth() {
+        _logger.Log($"Игрок решил что-нибудь продать.");
+        AnsiConsole.Write(new Rule("Продажа").Centered());
+        var goods = _inventory.GetSortedInventory().Select(g => new KeyValuePair<string, int>(g.Key.Name, g.Value))
+                    .Concat(_autoMiners.GroupBy(x => x.Name).Select(g => new KeyValuePair<string, int>(g.Key, g.Count())));
+        string selectionName = string.Empty;
+        do {
+            if (!goods.Any()) {
+                _logger.Log("У игрока нет товаров для продажи.");
+                AnsiConsole.MarkupLine("[red]У вас нет товаров для продажи[/]");
+                return;
+            }
+            AnsiConsole.MarkupLineInterpolated($"На данный момент у вас {_player.Capital} денежных едениц в инвентаре.");
+
+            _logger.Log("Вывод цен");
+            var tableOfCosts = new Table();
+            tableOfCosts.AddColumn(new TableColumn("Название").Centered());
+            tableOfCosts.AddColumn(new TableColumn("Цена").Centered());
+            foreach (var kvp in _shop) {
+                tableOfCosts.AddRow(kvp.Key.Name, (kvp.Value / 2).ToString());
+            }
+            AnsiConsole.Write(tableOfCosts.Centered());
+
+            if (_inventory.Count == 0 && _autoMiners.Count == 0) {
+                _logger.Log("У игрока нету товаров на продажу.");
+                AnsiConsole.MarkupLine("У вас нету товаров, которые можно было бы продать.");
+                selectionName = "Ничего не продавать";
+            } else {
+                AnsiConsole.MarkupLine("Вывод товаров, доступных к продаже.");
+                ViewInventory(printRule: false, printMiners: true, printCapital: false);
+
+                selectionName = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("Что вы хотите приобрести?")
+                        .PageSize(10)
+                        .MoreChoicesText("[grey](Двигайтесь вверх или вниз, чтобы увидеть больше вариантов)[/]")
+                        .AddChoices(goods.Select(g => g.Key).Concat(["Ничего не продавать"])));
+                if (selectionName == "Ничего не продавать") {
+                    _logger.Log("Человек решил ничего не продавать.");
+                    continue;
+                }
+                int maxCnt = goods.First(g => g.Key.Equals(selectionName)).Value;
+                int cnt = AnsiConsole.Prompt(
+                    new TextPrompt<int>("В каком количестве вы хотите продать товар?")
+                        .Validate(n => {
+                            if (n <= 0) return Spectre.Console.ValidationResult.Error("Нужно число большее нуля");
+                            else if (n > maxCnt) return Spectre.Console.ValidationResult.Error("Столько товаров нет в инвентаре");
+                            else return Spectre.Console.ValidationResult.Success();
+                        })
+                        .DefaultValue(maxCnt));
+
+                var good = GoodBuilder.GetGood(selectionName);
+                if (_inventory.Remove(good, cnt) ||
+                    _autoMiners.Remove(good as AutoMiner ?? throw new ArgumentOutOfRangeException("Товар не является типом AutoMiner."))) {
+                    _logger.Log($"Игрок успешно купил {selectionName} в размере {cnt} шт.");
+                    _player.AddMoney(_shop[good] / 2 * cnt);
+                    AnsiConsole.MarkupLineInterpolated($"[#6BE400]Вы успешно купил {selectionName} в размере {cnt} шт.[/]");
+                    AnsiConsole.MarkupLineInterpolated($"На данный момент у вас {_player.Capital} денежных едений в инвентаре.");
+                }
+                else throw new ArgumentOutOfRangeException("Не удалось определить тип товара.");
+            }
+        } while (!selectionName.Equals("Ничего не продавать"));
+    }
+
+    public void ViewInventory(bool printRule = true, bool printMiners = true, bool printCapital = true) {
         _logger.Log($"Вывод содержимого инвентаря, PrintRule: {printRule} PrintMiners: {printMiners}");
         if (printRule) AnsiConsole.Write(new Rule("Вывод инвентаря").Centered());
+        if (printCapital) AnsiConsole.MarkupLineInterpolated($"На данный момент у вас {_player.Capital} денежных едениц в инвентаре.");
         var sortedInventory = _inventory.GetSortedInventory();
         if (sortedInventory.Any()) {
             AnsiConsole.MarkupLine("Ваш инвентарь:");
@@ -367,8 +434,10 @@ internal enum PlayerAction {
     HarvestCrops,
     [Display(Name = "Посадить растения")]
     Plant,
-    [Display(Name = "Посмотреть магазин")]
-    ViewShop,
+    [Display(Name = "Купить что-нибудь в магазине")]
+    BuySmth,
+    [Display(Name = "Продать что-нибудь в магазине")]
+    SellSmth,
     [Display(Name = "Посмотреть инвентарь")]
     ViewInventory,
     [Display(Name = "Промотать время")]

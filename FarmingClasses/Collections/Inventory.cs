@@ -62,15 +62,15 @@ public class Inventory : ICollection<IBuyable> {
                select kvp.Key;
     }
 
-    public bool Remove(IBuyable item, int count = 1) {
+    public bool Remove(IBuyable item, int count) {
         if (_inventory.TryGetValue(item, out var value)) {
             if (value >= count) {
                 _inventory[item] = value - count;
                 return true;
             }
             return false;
-        } 
-        return false;
+        }
+        throw new ArgumentOutOfRangeException("Указанного товара не оказалось в инвентаре.");
     }
 
     public bool Remove(IBuyable item) {

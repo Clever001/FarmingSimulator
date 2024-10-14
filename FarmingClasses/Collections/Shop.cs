@@ -24,6 +24,8 @@ public class Shop : IEnumerable<KeyValuePair<IBuyable, int>> {
         }
     }
 
+    public int this[IBuyable good] => _costs[good];
+
     public bool Buy(IBuyable good, Player player) {
         if (good is null) return false;
 
