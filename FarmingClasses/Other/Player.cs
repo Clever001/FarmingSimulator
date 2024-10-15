@@ -2,11 +2,10 @@
 using System;
 
 namespace FarmingClasses.Other;
+
 public class Player : IComparable<Player>, IEquatable<Player> {
-    [JsonProperty]
     public string Name { get; }
-    [JsonProperty]
-    public int Capital { get; private set; }
+    public int Capital { get; set; }
 
     public Player(string name) {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
@@ -28,6 +27,7 @@ public class Player : IComparable<Player>, IEquatable<Player> {
         return false;
     }
 
+    [JsonIgnore]
     public bool IsBankrupt { get => Capital == 0; }
 
     public void MakeBunkrupt() => Capital = 0;

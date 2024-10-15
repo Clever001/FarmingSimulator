@@ -1,10 +1,11 @@
 ﻿using FarmingClasses.Exceptions;
 using FarmingClasses.Other;
+using Newtonsoft.Json;
 using System;
 
 namespace FarmingClasses.Plants;
 
-public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant>
+public /*abstract*/ class Plant : IBuyable, ICloneable, IEquatable<Plant>
 {
     public string Name { get; }
 
@@ -43,7 +44,7 @@ public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant>
         return MatureDate <= date;
     }
 
-    public abstract object Clone();
+    public /*abstract*/ virtual object Clone() { return new object(); }
 
     /// <summary>
     /// Проверяет равны ли два растения. 

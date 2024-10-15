@@ -434,8 +434,8 @@ internal sealed class GameRenderer {
     }
 
     public void SaveGame() {
-        GameSave save = new(_calendar, _autoMiners, _garden, _inventory, _shop);
-        _savesController.SaveGame(_player, save);
+        GameSave save = new(_calendar, _autoMiners, _garden, _inventory, _shop, _player);
+        _savesController.SaveGame(_player.Name, save);
         AnsiConsole.MarkupLineInterpolated($"[green]Игра успешно сохранена.[/] Игрок: {_player.Name}.");
     }
 }

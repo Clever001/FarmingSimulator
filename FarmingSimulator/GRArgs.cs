@@ -92,9 +92,8 @@ internal sealed class GRArgs {
         }
         var playersTable = new Table().Centered();
         playersTable.AddColumn(new TableColumn("Имя игрока").Centered());
-        playersTable.AddColumn(new TableColumn("Капитал").Centered());
-        foreach (Player player in SavesController.GetPlayers()) {
-            playersTable.AddRow(player.Name, player.Capital.ToString());
+        foreach (string player in SavesController.GetPlayers()) {
+            playersTable.AddRow(player);
         }
         AnsiConsole.Write(new Rule("Вывод сохранений").Centered());
         AnsiConsole.Write(playersTable);
@@ -102,9 +101,9 @@ internal sealed class GRArgs {
         string selectionName = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
               .Title("Какое сохранение загрузить?")
-              .AddChoices(SavesController.GetPlayers().Select(p => p.Name)));
+              .AddChoices(SavesController.GetPlayers()));
 
-        Player selectedPlayer = SavesController.GetPlayers().First(p => p.Name.Equals(selectionName));
+        string selectedPlayer = SavesController.GetPlayers().First(p => p.Equals(selectionName));
         GameSave save = SavesController[selectedPlayer];
 
         AnsiConsole.MarkupLine("[green]Сохранение успешно загружено.[/]");

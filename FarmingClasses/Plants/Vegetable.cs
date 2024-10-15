@@ -1,9 +1,11 @@
 ﻿using FarmingClasses.Exceptions;
 using FarmingClasses.Other;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FarmingClasses.Plants;
+
 public class Vegetable : Plant
 {
     public VegetableType VegetableType { get; }

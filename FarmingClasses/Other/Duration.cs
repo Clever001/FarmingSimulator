@@ -1,7 +1,9 @@
 ﻿using System;
 using FarmingClasses.Exceptions;
+using Newtonsoft.Json;
 
 namespace FarmingClasses.Other;
+
 public readonly record struct Duration: IComparable<Duration> {
     public int Days { get; }
     public int Months { get; }
