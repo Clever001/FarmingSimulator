@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +10,14 @@ namespace FarmingClasses.Other;
 
 public class Calendar {
     public DateOnly CurDay { get; private set; }
+
+    [JsonIgnore]
     public int Year => CurDay.Year;
+
+    [JsonIgnore]
     public int Month => CurDay.Month;
+
+    [JsonIgnore]
     public int Day => CurDay.Day;
 
     public Calendar(DateOnly curDay) {

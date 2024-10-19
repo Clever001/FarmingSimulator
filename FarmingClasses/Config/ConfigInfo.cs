@@ -1,13 +1,10 @@
-﻿using Newtonsoft.Json;
-using System.IO;
+﻿using System.IO;
+using System.Text.Json;
 
 namespace FarmingClasses.Config;
 
-[JsonObject(MemberSerialization.OptIn)]
 public class ConfigInfo {
-    [JsonProperty]
     public bool TypeLog { get; set; }
-    [JsonProperty]
     public string LogFilePath { get; set; } = string.Empty;
 
     public static ConfigInfo? UnserializeConfig() {
@@ -15,7 +12,7 @@ public class ConfigInfo {
 
         try {
             string json = File.ReadAllText("config.json");
-            ConfigInfo? config = JsonConvert.DeserializeObject<ConfigInfo>(json);
+            ConfigInfo? config = JsonSerializer.Deserialize<ConfigInfo>(json);
             if (config is null || config.LogFilePath is null || config.LogFilePath == "") return null;
 
             return config;

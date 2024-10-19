@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace FarmingClasses.Other;
 
@@ -16,6 +16,7 @@ public class AutoMiner : IBuyable {
     /// </summary>
     public int CanCollect { get; }
 
+    [JsonIgnore]
     public string Description => $"Всего может собрать: {CanCollect} урожая.";
 
     public AutoMiner(string name, int baseCost, int canCollect) {
@@ -27,9 +28,9 @@ public class AutoMiner : IBuyable {
         CanCollect = canCollect;
     }
 
-    public AutoMiner(string name, string pluralName, int baseCost, int canCollect)
+    [JsonConstructor]
+    public AutoMiner(string name, string? pluralName, int baseCost, int canCollect)
         : this(name, baseCost, canCollect) {
-        ArgumentException.ThrowIfNullOrWhiteSpace(pluralName, nameof(pluralName));
         PluralName = pluralName;
     }
 

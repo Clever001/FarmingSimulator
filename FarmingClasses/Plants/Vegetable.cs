@@ -1,8 +1,8 @@
 ﻿using FarmingClasses.Exceptions;
 using FarmingClasses.Other;
-using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace FarmingClasses.Plants;
 
@@ -10,10 +10,11 @@ public class Vegetable : Plant
 {
     public VegetableType VegetableType { get; }
 
-    public Vegetable(string name, DateOnly? plantedTime, Duration? maturationTime, string description, VegetableType type)
+    [JsonConstructor]
+    public Vegetable(string name, DateOnly? plantedTime, Duration? maturationTime, string description, VegetableType vegetableType)
         : base(name, plantedTime, maturationTime, description)
     {
-        VegetableType = type;
+        VegetableType = vegetableType;
     }
 
     public override object Clone() => new Vegetable(Name, PlantedTime, MaturationTime, Description, VegetableType);

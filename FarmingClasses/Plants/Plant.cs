@@ -1,20 +1,21 @@
 ﻿using FarmingClasses.Exceptions;
 using FarmingClasses.Other;
-using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 
 namespace FarmingClasses.Plants;
 
-public /*abstract*/ class Plant : IBuyable, ICloneable, IEquatable<Plant>
+public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant>
 {
     public string Name { get; }
 
     public DateOnly? PlantedTime { get; private set; }
 
-    protected Duration? MaturationTime { get; private set; }
+    public Duration? MaturationTime { get; private set; }
 
     public string Description { get; }
 
+    [JsonIgnore]
     public int BaseCost => 10;
 
     public Plant(string name, DateOnly? plantedTime, Duration? maturationTime, string description)

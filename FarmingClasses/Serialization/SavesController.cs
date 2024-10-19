@@ -34,7 +34,7 @@ public sealed class SavesController : IEnumerable<KeyValuePair<string, GameSave>
         try {
             string json = File.ReadAllText(_path);
 
-            var saves = JsonSerializer.Deserialize<SortedDictionary<string, GameSave>>(json)
+            var saves = JsonSerializer.Deserialize<SortedDictionary<string, GameSave>>(json, new JsonSerializerOptions { Converters = { new PlantConverter(), new IBuyableConverter() } })
                 ?? throw new ArgumentNullException("Ошибка в чтении json файла.");
 
             if (player is not null && currentSave is not null) {
@@ -58,7 +58,7 @@ public sealed class SavesController : IEnumerable<KeyValuePair<string, GameSave>
             }
         }
 
-        string json = JsonSerializer.Serialize(_gameSaves)
+        string json = JsonSerializer.Serialize(_gameSaves, new JsonSerializerOptions { Converters = { new PlantConverter(), new IBuyableConverter() } })
             ?? throw new ArgumentException("Ошибка при сериализации объекта.");
 
         File.WriteAllText(_path, json);
