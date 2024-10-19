@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -10,7 +10,7 @@ namespace FarmingClasses.Logger;
 public sealed class FileLogOutput : ILogOutput, IDisposable {
     private readonly int _MAX_BUFFER_SIZE;
     private readonly string _fileName;
-    private readonly ConcurrentQueue<string> _logQueue;
+    private readonly Queue<string> _logQueue;
     private readonly Task _logTask;
     private readonly CancellationTokenSource _cancellationTokenSource;
     private int _curSize = 0;
@@ -23,7 +23,7 @@ public sealed class FileLogOutput : ILogOutput, IDisposable {
         File.WriteAllText(fileName, string.Empty);
         _fileName = fileName;
         _MAX_BUFFER_SIZE = maxBufferSize;
-        _logQueue = new ConcurrentQueue<string>();
+        _logQueue = new Queue<string>();
         _cancellationTokenSource = new CancellationTokenSource();
 
         _logTask = Task.Run(() => ProcessLogsAsync(_cancellationTokenSource.Token));
