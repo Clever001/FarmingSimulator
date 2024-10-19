@@ -6,12 +6,12 @@ using System.Linq;
 
 namespace FarmingClasses.Collections;
 
-public class Inventory : ICollection<IBuyable> {
-    private Dictionary<IBuyable, int> _inventory = new();
+public class Inventory<T> : ICollection<T> where T : IBuyable {
+    private Dictionary<T, int> _inventory = new();
 
     public Inventory() { }
 
-    public Inventory(IEnumerable<KeyValuePair<IBuyable, int>> items) {
+    public Inventory(IEnumerable<KeyValuePair<T, int>> items) {
         foreach (var kvp in items) {
             Add(kvp.Key, kvp.Value);
         }
@@ -21,16 +21,16 @@ public class Inventory : ICollection<IBuyable> {
 
     public bool IsReadOnly => false;
 
-    public int this[IBuyable good] => _inventory[good];
+    public int this[T good] => _inventory[good];
 
-    public void Add(IBuyable item, int count) {
+    public void Add(T item, int count) {
         ArgumentNullException.ThrowIfNull(item, nameof(item));
         ArgumentOutOfRangeException.ThrowIfLessThan(count, 1, nameof(count));
         if (_inventory.TryGetValue(item, out int value)) _inventory[item] = value + count;
         else _inventory.Add(item, 1);
     }
 
-    public void Add(IBuyable item) {
+    public void Add(T item) {
         Add(item, 1);
     }
 
@@ -38,39 +38,40 @@ public class Inventory : ICollection<IBuyable> {
         _inventory.Clear();
     }
 
-    public bool Contains(IBuyable item) {
+    public bool Contains(T item) {
         if (_inventory.TryGetValue(item, out int value)) return value > 0;
         else return false;
     }
 
-    public void CopyTo(IBuyable[] array, int arrayIndex) {
+    public void CopyTo(T[] array, int arrayIndex) {
         ArgumentNullException.ThrowIfNull(array);
         if (arrayIndex < 0 || arrayIndex >= array.Length) throw new ArgumentOutOfRangeException(nameof(array));
         if (array.Length - arrayIndex < Count) throw new ArgumentException("Недостаточно места в массиве.");
 
-        foreach (IBuyable item in this) {
+        foreach (T item in this) {
             array[arrayIndex++] = item;
         }
     }
 
-    public IEnumerator<IBuyable> GetEnumerator() {
-        foreach ((IBuyable key, int value) in _inventory) {
+    public IEnumerator<T> GetEnumerator() {
+        foreach ((T key, int value) in _inventory) {
             for (int i = value; i > 0; --i) yield return key;
         }
     }
 
-    public IEnumerable<KeyValuePair<IBuyable, int>> GetSortedInventory() {
+    public IEnumerable<KeyValuePair<T, int>> GetSortedInventory() {
         return _inventory.Where(kvp => kvp.Value > 0).OrderBy(kvp => kvp.Key.Name);
     }
 
-    public IEnumerable<IBuyable> GetSortedKeys() {
+    public IEnumerable<T> GetSortedKeys() {
         return from kvp in _inventory
                where kvp.Value > 0
                orderby kvp.Key.Name
                select kvp.Key;
     }
 
-    public bool Remove(IBuyable item, int count) {
+    public bool Remove(T? item, int count) {
+        if (item is null) return false;
         if (_inventory.TryGetValue(item, out var value)) {
             if (value >= count) {
                 _inventory[item] = value - count;
@@ -81,7 +82,7 @@ public class Inventory : ICollection<IBuyable> {
         throw new ArgumentOutOfRangeException("Указанного товара не оказалось в инвентаре.");
     }
 
-    public bool Remove(IBuyable item) {
+    public bool Remove(T? item) {
         return Remove(item, 1);
     }
 

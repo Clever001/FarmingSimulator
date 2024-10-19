@@ -10,11 +10,11 @@ public class GameSave {
     public FarmingClasses.Other.Calendar Calendar { get; init; }
     public List<AutoMiner> AutoMiners { get; init; }
     public Garden<Plant> Garden { get; init; }
-    public Inventory Inventory { get; init; }
+    public Inventory<Plant> Inventory { get; init; }
     public Shop Shop { get; init; }
     public Player Player { get; init; }
 
-    public GameSave(Calendar calendar, List<AutoMiner> autoMiners, Garden<Plant> garden, Inventory inventory, Shop shop, Player player) {
+    public GameSave(Calendar calendar, List<AutoMiner> autoMiners, Garden<Plant> garden, Inventory<Plant> inventory, Shop shop, Player player) {
         ArgumentNullException.ThrowIfNull(autoMiners, nameof(autoMiners));
         ArgumentNullException.ThrowIfNull(garden, nameof(garden));
         ArgumentNullException.ThrowIfNull(inventory, nameof(inventory));

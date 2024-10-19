@@ -13,7 +13,7 @@ internal sealed class GRArgs {
     public FarmingClasses.Other.Calendar? Calendar { get; private set; } = null;
     public List<AutoMiner>? AutoMiners { get; private set; } = null;
     public Garden<Plant>? Garden { get; private set; } = null;
-    public Inventory? Inventory { get; private set; } = null;
+    public Inventory<Plant>? Inventory { get; private set; } = null;
     public Shop? Shop { get; private set; } = null;
     public VegetableBuilder? VegetableBuilder { get; private set; } = null;
     public FruitBuilder? FruitBuilder { get; private set; } = null;

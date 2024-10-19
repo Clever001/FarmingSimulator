@@ -14,7 +14,7 @@ internal sealed class GameRenderer {
     private FarmingClasses.Other.Calendar _calendar;
     private List<AutoMiner> _autoMiners;
     private Garden<Plant> _garden;
-    private Inventory _inventory;
+    private Inventory<Plant> _inventory;
     private Shop _shop;
     private VegetableBuilder _vegetableBuilder;
     private FruitBuilder _fruitBuilder;
@@ -162,7 +162,7 @@ internal sealed class GameRenderer {
         int minersCanHarvest = 0;
         foreach (AutoMiner miner in _autoMiners) { minersCanHarvest += miner.CanCollect; }
 
-        int countOfWaitSteps = Math.Max(0, gainedPlants.Count - minersCanHarvest);
+        int countOfWaitSteps = Math.Max(1, gainedPlants.Count - minersCanHarvest);
 
         AnsiConsole.Progress()
             .Start(ctx => {
@@ -347,7 +347,7 @@ internal sealed class GameRenderer {
                         .DefaultValue(maxCnt));
 
                 var good = GoodBuilder.GetGood(selectionName);
-                if (_inventory.Remove(good, cnt) ||
+                if (_inventory.Remove(good as Plant, cnt) ||
                     _autoMiners.Remove(good as AutoMiner ?? throw new ArgumentOutOfRangeException("Товар не является типом AutoMiner."))) {
                     _logger.Log($"Игрок успешно купил {selectionName} в размере {cnt} шт.");
                     _player.AddMoney(_shop[good] / 2 * cnt);
