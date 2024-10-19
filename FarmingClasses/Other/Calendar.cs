@@ -20,6 +20,7 @@ public class Calendar {
     [JsonIgnore]
     public int Day => CurDay.Day;
 
+    [JsonConstructor]
     public Calendar(DateOnly curDay) {
         CurDay = curDay;
     }

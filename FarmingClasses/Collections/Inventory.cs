@@ -27,7 +27,7 @@ public class Inventory<T> : ICollection<T> where T : IBuyable {
         ArgumentNullException.ThrowIfNull(item, nameof(item));
         ArgumentOutOfRangeException.ThrowIfLessThan(count, 1, nameof(count));
         if (_inventory.TryGetValue(item, out int value)) _inventory[item] = value + count;
-        else _inventory.Add(item, 1);
+        else _inventory.Add(item, count);
     }
 
     public void Add(T item) {

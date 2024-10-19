@@ -47,8 +47,8 @@ internal sealed class GameRenderer {
     public async Task MainCycle() {
         _logger.Log("Начало основного цикла программы");
 
-        _inventory.Add(_vegetableBuilder.GetPotato(), 3);
-        for (int i = 0; i != 10; ++i) _garden.Add(_vegetableBuilder.GetPotato(_calendar.CurDay));
+        //_inventory.Add(_vegetableBuilder.GetPotato(), 3);
+        //for (int i = 0; i != 10; ++i) _garden.Add(_vegetableBuilder.GetPotato(_calendar.CurDay));
         //for (int i = 0; i != 3; ++i) _garden.Add(_vegetableBuilder.GetPotato(_calendar.CurDay));
         //for (int i = 0; i != 4; ++i) _garden.Add(_vegetableBuilder.GetCabbage(_calendar.CurDay));
         var sortTask = _garden.SortAsync();
@@ -434,6 +434,7 @@ internal sealed class GameRenderer {
     }
 
     public void SaveGame() {
+        _savesController.LoadSaves();
         GameSave save = new(_calendar, _autoMiners, _garden, _inventory, _shop, _player);
         _savesController.SaveGame(_player.Name, save);
         AnsiConsole.MarkupLineInterpolated($"[green]Игра успешно сохранена.[/] Игрок: {_player.Name}.");

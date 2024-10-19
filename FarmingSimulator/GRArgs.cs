@@ -46,6 +46,7 @@ internal sealed class GRArgs {
         if (selection == "Начать новую игру" || !LoadSave()) {
             CreatePlayer();
         } else {
+            _logger.Log("Конец инициализации игрока.");
             return;
         }
 
@@ -79,14 +80,18 @@ internal sealed class GRArgs {
     }
 
     public bool LoadSave() {
+        _logger.Log("Начата загрузка информации о игроке с диска");
         if (SavesController.LoadSaves()) {
+            _logger.Log("Успешно обработан файл c сохранениями.");
             AnsiConsole.MarkupLine("[green]Файл с сохранениями загружен успешно.[/]");
         } else {
+            _logger.Log("Не удалось загрузить сохранение с диска");
             AnsiConsole.MarkupLine("[red]Не удалось загрузить файл с сохранениями. Придется создать нового игрока.[/]");
             return false;
         }
 
         if (SavesController.Count == 0 ) {
+            _logger.Log("В файле не оказалось сохранений");
             AnsiConsole.MarkupLine("[red]В файле не оказалось сохранений. Придется создать нового игрока.[/]");
             return false;
         }
@@ -98,13 +103,26 @@ internal sealed class GRArgs {
         AnsiConsole.Write(new Rule("Вывод сохранений").Centered());
         AnsiConsole.Write(playersTable);
 
+        _logger.Log("Игрок выбирает сохранение");
+
         string selectionName = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
               .Title("Какое сохранение загрузить?")
               .AddChoices(SavesController.GetPlayers()));
 
-        string selectedPlayer = SavesController.GetPlayers().First(p => p.Equals(selectionName));
-        GameSave save = SavesController[selectedPlayer];
+        _logger.Log($"Игрок выбирал сохранение с именем {selectionName}");
+
+        //string selectedPlayer = SavesController.GetPlayers().First(p => p.Equals(selectionName));
+        GameSave save = SavesController[selectionName];
+
+        this.Player = save.Player;
+        this.Calendar = save.Calendar;
+        this.AutoMiners = save.AutoMiners;
+        this.Garden = new Garden<Plant>(save.Garden);
+        this.Inventory = new Inventory<Plant>(save.Inventory);
+        this.Shop = new Shop(save.Shop);
+        this.VegetableBuilder = new();
+        this.FruitBuilder = new();
 
         AnsiConsole.MarkupLine("[green]Сохранение успешно загружено.[/]");
         return true;

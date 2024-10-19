@@ -7,6 +7,7 @@ public class Player : IComparable<Player>, IEquatable<Player> {
     public string Name { get; }
     public int Capital { get; set; }
 
+    [JsonConstructor]
     public Player(string name) {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         Name = name;
