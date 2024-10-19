@@ -239,7 +239,8 @@ internal sealed class GameRenderer {
                         if (n <= 0) return Spectre.Console.ValidationResult.Error("Нужно число большее нуля");
                         else if (n > maxCnt) return Spectre.Console.ValidationResult.Error("Столько растений нет в инвентаре");
                         else return Spectre.Console.ValidationResult.Success();
-                    }));
+                    })
+                    .DefaultValue(maxCnt));
             _logger.Log($"Игрок решил посадить {plantName} в количестве {cnt} шт.");
 
             _garden.AddRange(PlantBuilder.GetRangeOfPlants(plant, cnt, _calendar.CurDay));
