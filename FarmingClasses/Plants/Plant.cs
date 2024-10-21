@@ -2,21 +2,27 @@
 using FarmingClasses.Other;
 using System;
 using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
 namespace FarmingClasses.Plants;
 
+[XmlInclude(typeof(Vegetable))]
+[XmlInclude(typeof(Fruit))]
 public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant>
 {
-    public string Name { get; }
+    public string Name { get; init; } = string.Empty;
 
-    public DateOnly? PlantedTime { get; private set; }
+    public DateOnly? PlantedTime { get; protected set; } = null;
 
-    public Duration? MaturationTime { get; private set; }
+    public Duration? MaturationTime { get; protected set; } = null;
 
-    public string Description { get; }
+    public string Description { get; init; } = string.Empty;
 
+    [XmlIgnore]
     [JsonIgnore]
     public int BaseCost => 10;
+
+    public Plant() { }
 
     public Plant(string name, DateOnly? plantedTime, Duration? maturationTime, string description)
     {

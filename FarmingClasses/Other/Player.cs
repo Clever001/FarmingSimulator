@@ -1,11 +1,14 @@
 ﻿using System.Text.Json.Serialization;
 using System;
+using System.Xml.Serialization;
 
 namespace FarmingClasses.Other;
 
 public class Player : IComparable<Player>, IEquatable<Player> {
-    public string Name { get; }
-    public int Capital { get; set; }
+    public string Name { get; init; } = string.Empty;
+    public int Capital { get; set; } = 100;
+
+    public Player() { }
 
     [JsonConstructor]
     public Player(string name) {
@@ -28,6 +31,7 @@ public class Player : IComparable<Player>, IEquatable<Player> {
         return false;
     }
 
+    [XmlIgnore]
     [JsonIgnore]
     public bool IsBankrupt { get => Capital == 0; }
 

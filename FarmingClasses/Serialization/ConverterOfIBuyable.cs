@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace FarmingClasses.Serialization;
-public class IBuyableConverter : JsonConverter<IBuyable> {
+public class ConverterOfIBuyable : JsonConverter<IBuyable> {
     public override IBuyable? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
         using JsonDocument doc = JsonDocument.ParseValue(ref reader);
         var root = doc.RootElement;
@@ -24,7 +24,7 @@ public class IBuyableConverter : JsonConverter<IBuyable> {
             JsonSerializer.Serialize(writer, new KeyValuePair<string, AutoMiner>("AutoMiner", autoMiner));
         }
         else if (value is Plant plant) {
-            JsonSerializer.Serialize(writer, new KeyValuePair<string, Plant>("Plant", plant), new JsonSerializerOptions { Converters = { new PlantConverter() } });
+            JsonSerializer.Serialize(writer, new KeyValuePair<string, Plant>("Plant", plant), new JsonSerializerOptions { Converters = { new ConverterOfPlants() } });
         }
         else {
             throw new JsonException($"Unknown plant type: {value.GetType().Name}");

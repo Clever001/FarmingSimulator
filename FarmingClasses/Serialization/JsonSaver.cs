@@ -1,19 +1,18 @@
-﻿using FarmingClasses.Other;
-using System.Text.Json;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 
 namespace FarmingClasses.Serialization;
-public sealed class SavesController : IEnumerable<KeyValuePair<string, GameSave>> {
+public sealed class JsonSaver : ISavesController {
     private SortedDictionary<string, GameSave> _gameSaves = new();
-    private readonly string _path;
+    private readonly string _fullName;
 
-    public SavesController(string path, bool loadSaves = false) {
-        ArgumentException.ThrowIfNullOrEmpty(path, nameof(path));
+    public JsonSaver(string fileName, bool loadSaves = false) {
+        ArgumentException.ThrowIfNullOrEmpty(fileName, nameof(fileName));
 
-        _path = path;
+        _fullName = fileName + ".json";
         if (loadSaves) LoadSaves();
     }
 
@@ -32,9 +31,9 @@ public sealed class SavesController : IEnumerable<KeyValuePair<string, GameSave>
 
     public bool LoadSaves(string? player = null, GameSave? currentSave = null) {
         try {
-            string json = File.ReadAllText(_path);
+            string json = File.ReadAllText(_fullName);
 
-            var saves = JsonSerializer.Deserialize<SortedDictionary<string, GameSave>>(json, new JsonSerializerOptions { Converters = { new PlantConverter(), new IBuyableConverter() } })
+            var saves = JsonSerializer.Deserialize<SortedDictionary<string, GameSave>>(json, new JsonSerializerOptions { Converters = { new ConverterOfPlants(), new ConverterOfIBuyable() } })
                 ?? throw new ArgumentNullException("Ошибка в чтении json файла.");
 
             if (player is not null && currentSave is not null) {
@@ -58,10 +57,10 @@ public sealed class SavesController : IEnumerable<KeyValuePair<string, GameSave>
             }
         }
 
-        string json = JsonSerializer.Serialize(_gameSaves, new JsonSerializerOptions { Converters = { new PlantConverter(), new IBuyableConverter() } })
+        string json = JsonSerializer.Serialize(_gameSaves, new JsonSerializerOptions { Converters = { new ConverterOfPlants(), new ConverterOfIBuyable() } })
             ?? throw new ArgumentException("Ошибка при сериализации объекта.");
 
-        File.WriteAllText(_path, json);
+        File.WriteAllText(_fullName, json);
     }
 
     public IEnumerator<KeyValuePair<string, GameSave>> GetEnumerator() => _gameSaves.GetEnumerator();

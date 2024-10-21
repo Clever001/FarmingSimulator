@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 
 namespace FarmingClasses.Serialization;
-public class PlantConverter : JsonConverter<Plant> {
+public class ConverterOfPlants : JsonConverter<Plant> {
     public override Plant Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
         using JsonDocument doc = JsonDocument.ParseValue(ref reader);
         var root = doc.RootElement;

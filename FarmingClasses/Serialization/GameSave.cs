@@ -9,12 +9,14 @@ using System.Text.Json.Serialization;
 
 namespace FarmingClasses.Serialization;
 public class GameSave {
-    public FarmingClasses.Other.Calendar Calendar { get; init; }
-    public List<AutoMiner> AutoMiners { get; init; }
-    public List<Plant> Garden { get; init; }
-    public List<KeyValuePair<Plant, int>> Inventory { get; init; }
-    public List<KeyValuePair<IBuyable, int>> Shop { get; init; }
-    public Player Player { get; init; }
+    public FarmingClasses.Other.Calendar? Calendar { get; init; }
+    public List<AutoMiner>? AutoMiners { get; init; }
+    public List<Plant>? Garden { get; init; }
+    public List<KeyValuePair<Plant, int>>? Inventory { get; init; }
+    public List<KeyValuePair<IBuyable, int>>? Shop { get; init; }
+    public Player? Player { get; init; }
+
+    public GameSave() { }
 
     [JsonConstructor]
     public GameSave(Calendar calendar, List<AutoMiner> autoMiners, List<Plant> garden, List<KeyValuePair<Plant, int>> inventory, List<KeyValuePair<IBuyable, int>> shop, Player player) {

@@ -18,7 +18,7 @@ internal sealed class GameRenderer {
     private Shop _shop;
     private VegetableBuilder _vegetableBuilder;
     private FruitBuilder _fruitBuilder;
-    private SavesController _savesController;
+    private ISavesController _savesController;
 
     public GameRenderer(GRArgs args, Logger logger) {
         ArgumentNullException.ThrowIfNull(args.Player, nameof(args.Player));

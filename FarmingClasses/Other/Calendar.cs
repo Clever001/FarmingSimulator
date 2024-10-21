@@ -4,19 +4,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace FarmingClasses.Other;
 
 
 public class Calendar {
-    public DateOnly CurDay { get; private set; }
+    public DateOnly CurDay { get; protected set; }
 
+    [XmlIgnore]
     [JsonIgnore]
     public int Year => CurDay.Year;
 
+    [XmlIgnore]
     [JsonIgnore]
     public int Month => CurDay.Month;
 
+    [XmlIgnore]
     [JsonIgnore]
     public int Day => CurDay.Day;
 

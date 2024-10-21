@@ -6,6 +6,7 @@ namespace FarmingClasses.Config;
 public class ConfigInfo {
     public bool TypeLog { get; set; }
     public string LogFilePath { get; set; } = string.Empty;
+    public string SerializationFormat { get; set; } = string.Empty;
 
     public static ConfigInfo? UnserializeConfig() {
         if (!Path.Exists("config.json")) return null;

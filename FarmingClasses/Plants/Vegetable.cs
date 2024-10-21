@@ -8,7 +8,9 @@ namespace FarmingClasses.Plants;
 
 public class Vegetable : Plant
 {
-    public VegetableType VegetableType { get; }
+    public VegetableType VegetableType { get; init; } = VegetableType.RootVegetables;
+
+    public Vegetable() : base() { }
 
     [JsonConstructor]
     public Vegetable(string name, DateOnly? plantedTime, Duration? maturationTime, string description, VegetableType vegetableType)

@@ -7,9 +7,9 @@ namespace FarmingClasses.Other;
 /// Майнеры могут работать в саду.
 /// </summary>
 public class AutoMiner : IBuyable {
-    public string Name { get; }
-    public string? PluralName { get; } = null;
-    public int BaseCost { get; }
+    public string Name { get; init; } = string.Empty;
+    public string? PluralName { get; init; } = null;
+    public int BaseCost { get; init; } = 10;
 
     /// <summary>
     /// Отображает сколько растений с огорода может собрать данный майнер.
@@ -27,6 +27,8 @@ public class AutoMiner : IBuyable {
         BaseCost = baseCost;
         CanCollect = canCollect;
     }
+
+    public AutoMiner() { }
 
     [JsonConstructor]
     public AutoMiner(string name, string? pluralName, int baseCost, int canCollect)

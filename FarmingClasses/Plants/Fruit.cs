@@ -8,7 +8,9 @@ namespace FarmingClasses.Plants;
 
 public class Fruit : Plant
 {
-    public TreeType TreeType { get; }
+    public TreeType TreeType { get; init; } = TreeType.Deciduous;
+
+    public Fruit() : base() { }
 
     [JsonConstructor]
     public Fruit(string name, DateOnly? plantedTime, Duration? maturationTime, string description, TreeType treeType)

@@ -17,10 +17,14 @@ internal sealed class GRArgs {
     public Shop? Shop { get; private set; } = null;
     public VegetableBuilder? VegetableBuilder { get; private set; } = null;
     public FruitBuilder? FruitBuilder { get; private set; } = null;
-    public SavesController SavesController { get; private set; } = new(path: "game_saves.json");
+    public ISavesController SavesController { get; private set; }
 
-    public GRArgs(Logger logger) {
+    public GRArgs(Logger logger, ISavesController savesController) {
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+        ArgumentNullException.ThrowIfNull(savesController);
+
         _logger = logger;
+        SavesController = savesController;
         _logger.Log("Был создан объект типа GameRendererArguments");
     }
 
@@ -118,9 +122,9 @@ internal sealed class GRArgs {
         this.Player = save.Player;
         this.Calendar = save.Calendar;
         this.AutoMiners = save.AutoMiners;
-        this.Garden = new Garden<Plant>(save.Garden);
-        this.Inventory = new Inventory<Plant>(save.Inventory);
-        this.Shop = new Shop(save.Shop);
+        this.Garden = new Garden<Plant>(save.Garden ?? throw new ArgumentNullException(nameof(save.Garden)));
+        this.Inventory = new Inventory<Plant>(save.Inventory ?? throw new ArgumentNullException(nameof(save.Garden)));
+        this.Shop = new Shop(save.Shop ?? throw new ArgumentNullException(nameof(save.Garden)));
         this.VegetableBuilder = new();
         this.FruitBuilder = new();
 
