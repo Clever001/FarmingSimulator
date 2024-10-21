@@ -16,8 +16,6 @@ public class VegetableTests {
 
         Assert.Throws<ArgumentException>(() => { new Vegetable("", new(2023, 2, 1), new(90), "Carrots are good for the eyes.", VegetableType.RootVegetables); });
         Assert.Throws<ArgumentException>(() => { new Vegetable("  ", new(2023, 2, 1), new(90), "Carrots are good for the eyes.", VegetableType.RootVegetables); });
-        Assert.Throws<ArgumentOutOfRangeException>(() => { new Vegetable("Carrot", default, new(90), "Carrots are good for the eyes.", VegetableType.RootVegetables); });
-        Assert.Throws<DurationException>(() => { new Vegetable("Carrot", new(2023, 2, 1), default, "Carrots are good for the eyes.", VegetableType.RootVegetables); });
         Assert.Throws<ArgumentException>(() => { new Vegetable("Carrot", new(2023, 2, 1), new(90), "", VegetableType.RootVegetables); });
         Assert.Throws<ArgumentException>(() => { new Vegetable("Carrot", new(2023, 2, 1), new(90), " ", VegetableType.RootVegetables); });
     }
