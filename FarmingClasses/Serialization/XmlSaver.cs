@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FarmingClasses.Extensions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +16,7 @@ public class XmlSaver : ISavesController {
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName, nameof(fileName));
 
         _fullName = fileName + ".xml";
-        _serializer = new XmlSerializer(typeof(List<KeyValuePair<string, GameSave>>));
+        _serializer = new XmlSerializer(typeof(List<KVP<string, GameSave>>));
         if (loadSaves) { LoadSaves(); }
     }
 
@@ -70,6 +71,6 @@ public class XmlSaver : ISavesController {
         }
 
         using var fs = new FileStream(_fullName, FileMode.Create, FileAccess.Write);
-        _serializer.Serialize(fs, _gameSaves.ToList());
+        _serializer.Serialize(fs, _gameSaves.ToList().ToCustomKVP());
     }
 }

@@ -12,9 +12,9 @@ public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant>
 {
     public string Name { get; init; } = string.Empty;
 
-    public DateOnly? PlantedTime { get; protected set; } = null;
+    public DateOnly? PlantedTime { get;  set; } = null;
 
-    public Duration? MaturationTime { get; protected set; } = null;
+    public Duration? MaturationTime { get; set; } = null;
 
     public string Description { get; init; } = string.Empty;
 

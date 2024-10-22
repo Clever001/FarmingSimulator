@@ -10,7 +10,14 @@ namespace FarmingClasses.Other;
 
 
 public class Calendar {
-    public DateOnly CurDay { get; protected set; }
+    [XmlIgnore]
+    public DateOnly CurDay { get; set; }
+
+    [JsonIgnore]
+    public string DateString {
+        get { return this.CurDay.ToString("yyyy-MM-dd"); }
+        set { this.CurDay = DateOnly.Parse(value); }
+    }
 
     [XmlIgnore]
     [JsonIgnore]

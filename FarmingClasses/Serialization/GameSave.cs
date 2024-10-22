@@ -1,19 +1,34 @@
 ﻿using FarmingClasses.Builders;
 using FarmingClasses.Collections;
+using FarmingClasses.Extensions;
 using FarmingClasses.Other;
 using FarmingClasses.Plants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
 namespace FarmingClasses.Serialization;
 public class GameSave {
     public FarmingClasses.Other.Calendar? Calendar { get; init; }
     public List<AutoMiner>? AutoMiners { get; init; }
     public List<Plant>? Garden { get; init; }
-    public List<KeyValuePair<Plant, int>>? Inventory { get; init; }
-    public List<KeyValuePair<IBuyable, int>>? Shop { get; init; }
+    [XmlIgnore]
+    public List<KeyValuePair<Plant, int>>? Inventory { get; set; }
+    [JsonIgnore]
+    public List<KVP<Plant, int>>? XMLInventory {
+        get => Inventory?.ToCustomKVP();
+        set => Inventory = value?.FromCustomKVP();
+    }
+
+    [XmlIgnore]
+    public List<KeyValuePair<IBuyable, int>>? Shop { get; set; }
+    [JsonIgnore]
+    public List<KVP<IBuyable, int>>? XmlShop {
+        get => Shop?.ToCustomKVP();
+        set => Shop = value?.FromCustomKVP();
+    }
     public Player? Player { get; init; }
 
     public GameSave() { }
