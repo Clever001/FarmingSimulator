@@ -51,7 +51,7 @@ public abstract class Plant : IBuyable, ICloneable, IEquatable<Plant>
         return MatureDate <= date;
     }
 
-    public /*abstract*/ virtual object Clone() { return new object(); }
+    public abstract object Clone();
 
     /// <summary>
     /// Проверяет равны ли два растения. 

@@ -7,21 +7,22 @@ using System.Threading.Tasks;
 
 namespace FarmingClasses.Logger;
 
-public sealed class FileLogOutput : ILogOutput, IDisposable {
+public sealed class StreamLogOutput : ILogOutput, IDisposable {
     private readonly int _MAX_BUFFER_SIZE;
-    private readonly string _fileName;
+    private readonly Stream _stream;
     private readonly Queue<string> _logQueue;
     private readonly Task _logTask;
     private readonly CancellationTokenSource _cancellationTokenSource;
     private int _curSize = 0;
     private readonly object _sizeLock = new();
 
-    public FileLogOutput(string fileName, int maxBufferSize) {
-        ArgumentException.ThrowIfNullOrEmpty(fileName, nameof(fileName));
+    public StreamLogOutput(Stream stream, int maxBufferSize) {
+        ArgumentNullException.ThrowIfNull(stream, nameof(stream));
         ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(maxBufferSize, 0, nameof(maxBufferSize));
+        if (!stream.CanWrite) throw new ArgumentException("Cannot write in stream.");
+        if (stream.CanSeek) stream.Seek(0, SeekOrigin.Begin);
 
-        File.WriteAllText(fileName, string.Empty);
-        _fileName = fileName;
+        _stream = stream;
         _MAX_BUFFER_SIZE = maxBufferSize;
         _logQueue = new Queue<string>();
         _cancellationTokenSource = new CancellationTokenSource();
@@ -42,7 +43,7 @@ public sealed class FileLogOutput : ILogOutput, IDisposable {
         StringBuilder logBuilder = new();
         while (!cancellationToken.IsCancellationRequested) {
             lock (_sizeLock) {
-                if (_curSize > _MAX_BUFFER_SIZE) {
+                if (_curSize >= _MAX_BUFFER_SIZE) {
                     while (_logQueue.TryDequeue(out string? logMessage)) {
                         if (logMessage is not null) logBuilder.AppendLine(logMessage);
                     }
@@ -50,7 +51,7 @@ public sealed class FileLogOutput : ILogOutput, IDisposable {
                 }
             }
             if (logBuilder.Length > 0) {
-                File.AppendAllText(_fileName, logBuilder.ToString());
+                _stream.Write(Encoding.UTF8.GetBytes(logBuilder.ToString()));
                 logBuilder.Clear();
             }
             await Task.Delay(1000);
@@ -65,7 +66,7 @@ public sealed class FileLogOutput : ILogOutput, IDisposable {
             }
 
             _curSize = 0;
-            File.AppendAllText(_fileName, logBuilder.ToString());
+            _stream.Write(Encoding.UTF8.GetBytes(logBuilder.ToString()));
         }
     }
 

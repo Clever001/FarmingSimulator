@@ -14,9 +14,10 @@ if (config is null) {
 // Logging specification
 var logger = new Logger();
 
-FileLogOutput? fileLog;
+StreamLogOutput? fileLog;
+using FileStream outStream = new(config.LogFilePath, FileMode.Create, FileAccess.Write);
 if (config.TypeLog) {
-    fileLog = new FileLogOutput(config.LogFilePath, 5120);
+    fileLog = new StreamLogOutput(outStream, 5120);
     logger.LogEvent += fileLog.WriteLog;
 }
 else fileLog = null;

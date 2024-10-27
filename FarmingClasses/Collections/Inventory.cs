@@ -17,7 +17,7 @@ public class Inventory<T> : ICollection<T> where T : IBuyable {
         }
     }
 
-    public int Count => _inventory.Count;
+    public int Count => _inventory.Select(x => x.Value).Sum();
 
     public bool IsReadOnly => false;
 
