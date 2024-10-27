@@ -159,10 +159,10 @@ public class GardenTests {
         garden.Add(new Fruit("Apple", DateOnly.FromDateTime(DateTime.Now), new Duration(0, 1), "Deciduous tree", TreeType.Deciduous));
 
         // Act
-        garden.RemoveIf(plant => plant.Name.StartsWith("A"));
+        garden.RemoveIf(plant => plant.Name.StartsWith('A'));
 
         // Assert
         Assert.Single(garden);
-        Assert.DoesNotContain(garden, p => p.Name.StartsWith("A"));
+        Assert.DoesNotContain(garden, p => p.Name.StartsWith('A'));
     }
 }
