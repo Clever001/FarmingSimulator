@@ -15,6 +15,7 @@ public sealed class StreamLogOutput : ILogOutput, IDisposable {
     private readonly CancellationTokenSource _cancellationTokenSource;
     private int _curSize = 0;
     private readonly object _sizeLock = new();
+    private readonly int _sleepTime = 1000;
 
     public StreamLogOutput(Stream stream, int maxBufferSize) {
         ArgumentNullException.ThrowIfNull(stream, nameof(stream));
@@ -28,6 +29,10 @@ public sealed class StreamLogOutput : ILogOutput, IDisposable {
         _cancellationTokenSource = new CancellationTokenSource();
 
         _logTask = Task.Run(() => ProcessLogsAsync(_cancellationTokenSource.Token));
+    }
+    
+    public StreamLogOutput(Stream stream, int maxBufferSize, int sleepTime) : this(stream, maxBufferSize) {
+        _sleepTime = sleepTime;
     }
 
     public void WriteLog(string message) {
@@ -54,7 +59,7 @@ public sealed class StreamLogOutput : ILogOutput, IDisposable {
                 _stream.Write(Encoding.UTF8.GetBytes(logBuilder.ToString()));
                 logBuilder.Clear();
             }
-            await Task.Delay(1000);
+            await Task.Delay(_sleepTime);
         }
     }
 

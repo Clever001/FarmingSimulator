@@ -45,13 +45,13 @@ public class LoggersTests {
     [Fact]
     public async Task WriteLog_ShouldFlush_WhenBufferExceedsMaxSize() {
         using MemoryStream memoryStream = new MemoryStream();
-        using StreamLogOutput logOutput = new StreamLogOutput(memoryStream, 1024);
+        using StreamLogOutput logOutput = new StreamLogOutput(memoryStream, 1024, 50);
 
         var largeMessage = new string('a', 512); // Сообщение размером 1024 байт
         logOutput.WriteLog(largeMessage);
 
         // Ожидание, чтобы задача обработки могла выполнить Flush
-        await Task.Delay(1100);
+        await Task.Delay(100);
 
         memoryStream.Seek(0, SeekOrigin.Begin);
         var logContent = Encoding.UTF8.GetString(memoryStream.ToArray());
