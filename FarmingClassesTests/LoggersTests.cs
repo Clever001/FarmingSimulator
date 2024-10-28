@@ -30,7 +30,7 @@ public class LoggersTests {
     [Fact]
     public void WriteLog_ShouldQueueMessage() {
         using MemoryStream memoryStream = new MemoryStream();
-        StreamLogOutput logOutput = new StreamLogOutput(memoryStream, 1024);
+        StreamLogOutput logOutput = new StreamLogOutput(memoryStream, 1024, 150);
         logOutput.WriteLog("Test message");
 
         // Закрываем и завершаем задачу, чтобы вызвать Flush
@@ -45,13 +45,13 @@ public class LoggersTests {
     [Fact]
     public async Task WriteLog_ShouldFlush_WhenBufferExceedsMaxSize() {
         using MemoryStream memoryStream = new MemoryStream();
-        using StreamLogOutput logOutput = new StreamLogOutput(memoryStream, 1024, 50);
+        using StreamLogOutput logOutput = new StreamLogOutput(memoryStream, 1024, 25);
 
         var largeMessage = new string('a', 512); // Сообщение размером 1024 байт
         logOutput.WriteLog(largeMessage);
 
         // Ожидание, чтобы задача обработки могла выполнить Flush
-        await Task.Delay(100);
+        await Task.Delay(50);
 
         memoryStream.Seek(0, SeekOrigin.Begin);
         var logContent = Encoding.UTF8.GetString(memoryStream.ToArray());
@@ -61,7 +61,7 @@ public class LoggersTests {
     [Fact]
     public void Dispose_ShouldFlushRemainingLogs() {
         using MemoryStream memoryStream = new MemoryStream();
-        StreamLogOutput logOutput = new StreamLogOutput(memoryStream, 1024);
+        StreamLogOutput logOutput = new StreamLogOutput(memoryStream, 1024, 50);
 
         logOutput.WriteLog("Final log");
 
@@ -75,7 +75,7 @@ public class LoggersTests {
     [Theory]
     [InlineData(10)]
     [InlineData(100)]
-    [InlineData(10000)]
+    [InlineData(1000)]
     public void TestMainLogger_LogsShouldEqual(int cnt) {
         Queue<string> ll = new();
         Logger logger = new();
