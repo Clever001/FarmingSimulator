@@ -1,6 +1,6 @@
 {
-  "parallelizeAssembly": true, // Параллельное выполнение тестов в разных сборках
-  "parallelizeTestCollections": true, // Параллельное выполнение коллекций тестов
-  "maxParallelThreads": 12, // Максимальное количество потоков
-  "diagnosticMessages": true // Включение диагностических сообщений для отладки
+  "parallelizeAssembly": true,
+  "parallelizeTestCollections": true,
+  "maxParallelThreads": 12,
+  "diagnosticMessages": true
 }
